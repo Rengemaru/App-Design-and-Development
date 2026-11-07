@@ -78,7 +78,7 @@ p{margin:0}.mute{color:var(--mute)}
   <div class="meta">
     <div class="card"><h2>画面サイズ</h2><ul><li>基準: 360 × 800 dp(縦向き)</li><li>左右の余白: 16 dp</li><li>タップできる部品: 高さ48 dp以上</li></ul></div>
     <div class="card"><h2>共通ルール</h2><ul><li>問題と答えの画面は、上部ヘッダーに「タイトルへ」を置く</li><li>主なボタンは画面の下側に置いて親指で押しやすくする</li></ul></div>
-    <div class="card"><h2>追加した機能</h2><ul><li>連続正解ボーナス(問題の上部と答え画面)</li><li>結果画面にボーナスと最大連続を表示</li></ul></div>
+    <div class="card"><h2>追加した機能</h2><ul><li>連続正解ボーナス(問題の上部と答え画面)</li><li>制限時間(1問20秒・設定値)と時間ボーナス(残り秒数×係数)</li><li>結果画面にボーナス(連続+時間)と最大連続を表示</li></ul></div>
   </div>
 
   <div class="card">
@@ -153,6 +153,7 @@ p{margin:0}.mute{color:var(--mute)}
         </div>
         <div class="prog" style="position:relative"><i></i><span class="pin" style="right:-8px;top:-8px">4</span></div>
         <div class="row2" style="align-items:center;position:relative"><div class="bx pill">カテゴリ名</div><div class="txt mute" style="text-align:right">3連続正解中</div><span class="pin" style="left:46%;top:-10px">5</span></div>
+        <div style="position:relative"><div class="row2" style="align-items:center;justify-content:space-between"><span class="txt">⏱ のこり</span><b style="font-size:18px">14秒</b></div><div class="prog" style="margin-top:4px"><i style="width:70%"></i></div><span class="pin" style="left:-8px;top:-8px">8</span></div>
         <div class="bx f" style="flex-direction:column;align-items:stretch;gap:8px;text-align:left;position:relative">
           <div class="bx ph" style="height:84px"><span>画像</span></div>
           <div class="txt">問題文が入ります。2行から3行くらいまで。</div>
@@ -171,6 +172,7 @@ p{margin:0}.mute{color:var(--mute)}
         <li><span class="n">5</span><span>カテゴリ名と、連続正解の回数</span></li>
         <li><span class="n">6</span><span>問題カード。画像は任意で、ない問題は枠ごと詰める</span></li>
         <li><span class="n">7</span><span>選択肢A〜D。押すと判定 <em>→ 答え</em></span></li>
+        <li><span class="n">8</span><span>制限時間のカウントダウン(1問20秒・設定値)。残り秒数×係数が時間ボーナスになる。0秒でも解答は続けられ、ボーナスが+0になるだけ</span></li>
       </ul>
     </div>
 
@@ -188,8 +190,9 @@ p{margin:0}.mute{color:var(--mute)}
         <div class="bx f" style="flex-direction:column;gap:2px;position:relative"><small class="mute" style="font-size:11px">答え</small><b style="font-size:19px">正解の選択肢</b><span class="pin" style="left:-8px;top:-8px">3</span></div>
         <div style="position:relative;display:grid;gap:6px"><div class="ln"></div><div class="ln"></div><div class="ln s"></div><span class="pin" style="left:-8px;top:-6px">4</span></div>
         <div class="bx f" style="justify-content:space-between;position:relative"><span>連続正解ボーナス</span><b>+30 pt</b><span class="pin" style="left:-8px;top:-8px">5</span></div>
+        <div class="bx f" style="justify-content:space-between;position:relative"><span>時間ボーナス</span><b>+28 pt</b><span class="pin" style="left:-8px;top:-8px">6</span></div>
         <div class="gap"></div>
-        <div class="bx btn" style="position:relative">次の問題へ<span class="pin" style="left:-8px;top:-8px">6</span></div>
+        <div class="bx btn" style="position:relative">次の問題へ<span class="pin" style="left:-8px;top:-8px">7</span></div>
       </div>
       <ul class="notes">
         <li><span class="n">1</span><span>問題画面と同じヘッダー <em>→ ホーム</em></span></li>
@@ -197,7 +200,8 @@ p{margin:0}.mute{color:var(--mute)}
         <li><span class="n">3</span><span>正解の選択肢。不正解のときはあなたの答えも並べる</span></li>
         <li><span class="n">4</span><span>解説文(2〜3行)</span></li>
         <li><span class="n">5</span><span>連続正解ボーナス。不正解なら非表示</span></li>
-        <li><span class="n">6</span><span>次へ <em>→ 問題</em> 最後の問題では <em>→ 結果</em></span></li>
+        <li><span class="n">6</span><span>時間ボーナス = 残り秒数 × 係数。時間切れ(0秒)や不正解なら +0 で非表示</span></li>
+        <li><span class="n">7</span><span>次へ <em>→ 問題</em> 最後の問題では <em>→ 結果</em></span></li>
       </ul>
     </div>
 
@@ -214,7 +218,7 @@ p{margin:0}.mute{color:var(--mute)}
         <div class="c" style="font-size:16px;font-weight:700;position:relative">あと1問で S ランク!<span class="pin" style="left:20px;top:-6px">3</span></div>
         <div class="grid3" style="position:relative">
           <div class="bx f" style="flex-direction:column"><small class="mute" style="font-size:10px">最大連続</small><b>3回</b></div>
-          <div class="bx f" style="flex-direction:column"><small class="mute" style="font-size:10px">ボーナス</small><b>+30</b></div>
+          <div class="bx f" style="flex-direction:column"><small class="mute" style="font-size:10px">ボーナス</small><b>+58</b></div>
           <div class="bx f" style="flex-direction:column"><small class="mute" style="font-size:10px">タイム</small><b>0:48</b></div>
           <span class="pin" style="left:-8px;top:-8px">4</span>
         </div>
@@ -226,7 +230,7 @@ p{margin:0}.mute{color:var(--mute)}
         <li><span class="n">1</span><span>見出しと、遊んだカテゴリ</span></li>
         <li><span class="n">2</span><span>ランク(S・A・B・C・D)を大きく。下に正解数 / 問題数</span></li>
         <li><span class="n">3</span><span>次のランクまでの案内(例: あと1問で S ランク)</span></li>
-        <li><span class="n">4</span><span>最大連続、ボーナス、タイム</span></li>
+        <li><span class="n">4</span><span>最大連続、ボーナス(連続+時間の合計)、タイム</span></li>
         <li><span class="n">5</span><span>合計スコア(ボーナス込み)</span></li>
         <li><span class="n">6</span><span>タイトルへ <em>→ ホーム</em> もう一度 <em>→ 同じカテゴリの問題1</em></span></li>
       </ul>
@@ -263,7 +267,19 @@ p{margin:0}.mute{color:var(--mute)}
       <tr><td>問題カード</td><td>問題</td><td>画像は任意</td></tr>
       <tr><td>選択肢ボタン</td><td>問題</td><td>A〜Dの4つ。高さ48 dp以上</td></tr>
       <tr><td>連続正解チップ</td><td>問題、答え、結果</td><td>ボーナス点の加算を見せる</td></tr>
+      <tr><td>カウントダウンタイマー</td><td>問題</td><td>1問20秒(設定値)。残り秒数×係数が時間ボーナス。0でボーナスのみ無効、解答は継続可</td></tr>
     </table>
+  </div>
+
+  <div class="card tw">
+    <h2>時間ボーナスの考え方</h2>
+    <ul style="margin:0;padding-left:20px;display:grid;gap:4px">
+      <li><b>1問ごとにカウントダウンする。</b>初期値は20秒(設定値)。画像つきや長文も読める長さにする。</li>
+      <li><b>時間ボーナス = 残り秒数 × 係数。</b>速いほど線形に加点。係数は設定値として1か所に持ち、あとから調整できるようにする。</li>
+      <li><b>0秒になっても解答は続けられる。</b>時間切れは「時間ボーナスが+0になるだけ」で、正誤判定や連続正解には影響しない。正解すれば連続正解は継続する。</li>
+      <li><b>ランクには入れない。</b>連続正解ボーナスと同じく、時間ボーナスも正解率で決めるランクには含めない。</li>
+      <li><b>合計スコアには入れる。</b>結果画面の合計スコアとボーナス表示には時間ボーナスを含める。</li>
+    </ul>
   </div>
 </div>
 
