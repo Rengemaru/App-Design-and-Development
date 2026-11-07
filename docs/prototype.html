@@ -1,0 +1,409 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>クイズ帳 動作モック</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Yusei+Magic&family=Zen+Maru+Gothic:wght@500;700;900&display=swap">
+<style>
+/* ============================================================
+   クイズ帳 - 動作確認用プロトタイプ（単一HTMLで完結）
+   画面遷移・制限時間・採点・連続正解・時間ボーナス・ランクが実際に動く
+   ============================================================ */
+:root{--bg:#EEF1F8;--fg:#1E2A5A;--mute:#5b6488;--line:#d3d9ec;color-scheme:light}
+@media (prefers-color-scheme:dark){:root:not([data-theme=light]){--bg:#141829;--fg:#e9ecf8;--mute:#a3abc9;--line:#38405f;color-scheme:dark}}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;background:var(--bg);color:var(--fg);font-family:'Zen Maru Gothic',system-ui,sans-serif;
+  display:flex;flex-direction:column;align-items:center;gap:14px;padding:24px 12px 48px}
+.title-note{font-size:12px;color:var(--mute);text-align:center;max-width:320px;line-height:1.6}
+.title-note b{color:var(--fg)}
+
+/* phone shell */
+.phone{--ink:#1E2A5A;--card:#fff;--p:#FF5A5F;--pf:#fff;--s:#FFE066;--sf:#1E2A5A;--a:#FFE066;--line2:#1E2A5A;--bd:2px;--r:6px;
+  --sh:3px 3px 0 rgba(30,42,90,.55);--shs:2px 2px 0 rgba(30,42,90,.4);--ng:#3C8DFF;--c1:#FF5A5F;--c2:#3C8DFF;--c3:#2FBF71;--c4:#FFB020;
+  width:300px;height:624px;background:#15141c;border-radius:38px;padding:9px;box-shadow:0 16px 34px rgba(20,30,80,.28)}
+.scr{position:relative;height:100%;border-radius:30px;overflow:hidden;color:var(--ink);
+  background:repeating-linear-gradient(#EAF6FF 0 23px,#9CCBEA 23px 24px);
+  font-family:'Yusei Magic','Zen Maru Gothic',sans-serif;font-weight:400;font-size:13px;line-height:1.4;
+  padding:12px 16px 18px;display:flex;flex-direction:column;gap:10px}
+.sb{display:flex;justify-content:space-between;font:700 10px system-ui,sans-serif;opacity:.7;padding:0 4px}
+.hd{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.ttl{font-size:18px;line-height:1.2}
+.back,.pt,.tag{background:#fff;border:var(--bd) solid var(--line2);border-radius:99px;box-shadow:var(--shs)}
+.back{padding:3px 11px;font-size:11px;white-space:nowrap;cursor:pointer}
+.pt{font-size:11px;background:var(--a);padding:3px 10px;box-shadow:none}
+.tag{background:var(--s);padding:1px 10px;font-size:11px;box-shadow:none}
+.btn{position:relative;font-size:17px;text-align:center;background:var(--p);color:var(--pf);border:var(--bd) solid var(--line2);
+  border-radius:var(--r);box-shadow:var(--sh);padding:11px 8px;transform:rotate(-.8deg);cursor:pointer;user-select:none}
+.btn::before{content:"";position:absolute;left:50%;top:-9px;width:46px;height:14px;background:rgba(255,224,102,.88);transform:translateX(-50%) rotate(-3deg)}
+.btn.alt{background:var(--s);color:var(--sf)}.btn.alt::before,.btn.sm::before{display:none}
+.btn.sm{font-size:13px;padding:9px 6px}
+.btn:active{transform:rotate(-.8deg) translateY(2px);box-shadow:1px 1px 0 rgba(30,42,90,.55)}
+.card2{background:#fff;border:var(--bd) solid var(--line2);border-radius:var(--r);box-shadow:var(--sh);padding:10px 12px;transform:rotate(-.6deg)}
+.sub{font-size:12px;opacity:.85;text-align:center}
+.foot{text-align:center;font-size:11px;opacity:.8;margin-top:8px}
+
+/* screens toggling */
+.view{display:none;flex-direction:column;gap:10px;height:100%}
+.view.on{display:flex}
+
+/* title */
+.mid{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;text-align:center}
+.logo small{display:inline-block;font-size:11px;background:var(--a);border:var(--bd) solid var(--line2);border-radius:99px;padding:2px 12px;margin-bottom:8px;transform:rotate(-3deg)}
+.logo h1{margin:0;font-weight:400;font-size:50px;line-height:1.05;text-decoration:underline wavy #FF5A5F 3px;text-underline-offset:8px}
+.q{width:92px;height:92px;display:grid;place-items:center;border-radius:50%;border:4px dashed #FF5A5F;color:#FF5A5F;font-size:62px;line-height:1}
+
+/* category */
+.cats{display:grid;gap:10px;flex:1;align-content:start;overflow:auto}
+.cat{display:flex;align-items:center;gap:11px;padding:9px 11px;cursor:pointer}
+.cat:nth-child(even){transform:rotate(.7deg)}
+.ic{flex:none;width:44px;height:44px;display:grid;place-items:center;font-size:22px;color:#fff;background:var(--c);border:var(--bd) solid var(--line2);border-radius:5px}
+.nm{flex:1;min-width:0}.nm b{display:block;font-weight:400;font-size:16px;line-height:1.2}.nm span{font-size:10.5px;opacity:.7}
+.go{font-size:17px}
+
+/* question */
+.prog{height:10px;background:#fff;border:var(--bd) solid var(--line2);border-radius:99px;overflow:hidden}
+.prog i{display:block;height:100%;background:var(--p);transition:width .3s}
+.qmeta{display:flex;justify-content:space-between;align-items:center;font-size:11px}
+.timer{display:flex;align-items:center;justify-content:space-between}
+.timer b{font-size:18px}
+.tbar{height:8px;background:#fff;border:var(--bd) solid var(--line2);border-radius:99px;overflow:hidden;margin-top:4px}
+.tbar i{display:block;height:100%;background:var(--c3);transition:width .1s linear}
+.tbar.warn i{background:#FFB020}.tbar.danger i{background:var(--p)}
+.qcard{display:grid;gap:8px}
+.img{height:84px;border-radius:4px;background:#FFF4C2;border:var(--bd) solid var(--line2);display:grid;place-items:center;overflow:hidden}
+.img svg{width:92px;height:52px}
+.qtext{font-size:14.5px;line-height:1.5}
+.chs{display:grid;gap:8px}
+.ch{display:flex;align-items:center;gap:10px;padding:8px 10px;background:#fff;border:var(--bd) solid var(--line2);border-radius:var(--r);box-shadow:var(--sh);font-size:13.5px;transform:rotate(-.6deg);cursor:pointer}
+.ch .l{flex:none;width:24px;height:24px;border-radius:50%;display:grid;place-items:center;font-size:12px;color:#fff;background:var(--c);border:1.5px solid var(--line2)}
+.ch:nth-child(1){--c:var(--c1)}.ch:nth-child(2){--c:var(--c2)}.ch:nth-child(3){--c:var(--c3)}.ch:nth-child(4){--c:var(--c4)}
+.ch.ok{background:#DDF6E6;box-shadow:inset 0 0 0 2px #2FBF71,var(--sh)}
+.ch.ng{background:#DCEBFF;box-shadow:inset 0 0 0 2px #3C8DFF,var(--sh)}
+.ch[disabled]{cursor:default}
+.ch .r{margin-left:auto;font-size:18px;line-height:1}
+
+/* answer */
+.verdict{display:flex;flex-direction:column;align-items:center;gap:4px;text-align:center}
+.mark{width:80px;height:80px;border-radius:50%;display:grid;place-items:center;font-size:54px;line-height:1;color:#FF5A5F;border:6px solid #FF5A5F;transform:rotate(-6deg)}
+.mark.x{color:var(--ng);border-color:var(--ng);border-radius:12px;transform:rotate(5deg)}
+.verdict h3{margin:0;font-weight:400;font-size:26px;line-height:1.1;color:#FF5A5F}
+.verdict h3.x{color:var(--ng)}
+.ans b{display:block;font-weight:400;font-size:19px;line-height:1.3}.ans small{font-size:10.5px;opacity:.7}
+.ans .you{font-size:12px;margin-top:4px;color:var(--ng)}
+.exp{font-size:12px;line-height:1.6}
+.combo{display:flex;align-items:center;justify-content:space-between;background:var(--a);border:var(--bd) solid var(--line2);border-radius:var(--r);box-shadow:var(--sh);padding:7px 12px;font-size:13px;transform:rotate(.6deg)}
+.combo em{font-style:normal;font-size:16px}
+.combo.off{background:#fff;opacity:.85}
+.ans-foot{margin-top:auto}
+
+/* result */
+.score{display:grid;justify-items:center;gap:6px;text-align:center}
+.big{width:120px;height:120px;display:grid;place-items:center;align-content:center;background:#FFE066;color:#FF5A5F;border:var(--bd) solid var(--line2);box-shadow:var(--sh);border-radius:50% 46% 54% 48%;transform:rotate(-4deg)}
+.big i{font-style:normal;font-size:12px}.big b{font-weight:400;font-size:54px;line-height:1}.big span{font-size:12px;margin-top:-2px;color:var(--ink)}
+.big.lo{background:#E3E7F3;color:#5b6488}
+.rankmsg{font-size:16px;color:#FF5A5F}.rankmsg.lo{color:#5b6488}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.stats .card2{padding:7px 4px;text-align:center}.stats span{display:block;font-size:10px;opacity:.75}.stats b{font-weight:400;font-size:17px}
+.total{display:flex;justify-content:space-between;align-items:baseline}.total b{font-weight:400;font-size:26px}
+.acts{display:grid;grid-template-columns:1fr 1.2fr;gap:8px;margin-top:auto}
+
+.replay{font-size:12px;color:var(--mute);text-decoration:underline;background:none;border:none;cursor:pointer;font-family:inherit}
+</style>
+</head>
+<body>
+
+<p class="title-note"><b>クイズ帳 動作モック</b><br>実際の遷移・20秒カウントダウン・採点・連続正解・時間ボーナス・ランク判定が動きます。カテゴリはサンプルを用意しています。</p>
+
+<div class="phone">
+  <div class="scr">
+    <!-- ===== HOME ===== -->
+    <div class="view on" id="v-home">
+      <div class="sb"><span>9:41</span><span>100%</span></div>
+      <div class="mid">
+        <div class="logo"><small>自分で作るクイズ</small><h1>クイズ帳</h1></div>
+        <div class="q">?</div>
+      </div>
+      <div>
+        <div class="btn" onclick="go('cat')">スタート</div>
+        <div class="foot">カテゴリをえらんで、クイズに挑戦しよう</div>
+      </div>
+    </div>
+
+    <!-- ===== CATEGORY ===== -->
+    <div class="view" id="v-cat">
+      <div class="sb"><span>9:41</span><span>100%</span></div>
+      <div class="hd"><span class="back" onclick="go('home')">‹ 戻る</span><span class="ttl">カテゴリ選択</span></div>
+      <div class="sub">挑戦するカテゴリをえらぼう</div>
+      <div class="cats" id="catList"></div>
+    </div>
+
+    <!-- ===== QUESTION ===== -->
+    <div class="view" id="v-quiz">
+      <div class="sb"><span>9:41</span><span>100%</span></div>
+      <div class="hd">
+        <span class="back" onclick="quitToTitle()">‹ タイトルへ</span>
+        <span class="ttl" style="font-size:15px" id="qnum">Q1 / 5</span>
+        <span class="pt" id="qscore">0pt</span>
+      </div>
+      <div class="prog"><i id="qprog"></i></div>
+      <div class="qmeta"><span class="tag" id="qcat">カテゴリ名</span><span id="qstreak"></span></div>
+      <div>
+        <div class="timer"><span>⏱ のこり</span><b id="qtime">20秒</b></div>
+        <div class="tbar"><i id="qtbar"></i></div>
+      </div>
+      <div class="card2 qcard">
+        <div class="img" id="qimg"></div>
+        <div class="qtext" id="qtext">問題文</div>
+      </div>
+      <div class="chs" id="qchs"></div>
+    </div>
+
+    <!-- ===== ANSWER ===== -->
+    <div class="view" id="v-ans">
+      <div class="sb"><span>9:41</span><span>100%</span></div>
+      <div class="hd">
+        <span class="back" onclick="quitToTitle()">‹ タイトルへ</span>
+        <span class="ttl" style="font-size:15px" id="anum">Q1 / 5</span>
+        <span class="pt" id="ascore">0pt</span>
+      </div>
+      <div class="verdict" id="averdict"></div>
+      <div class="card2 ans"><small>答え</small><b id="acorrect">正解</b><div class="you" id="ayou"></div></div>
+      <div class="exp" id="aexp"></div>
+      <div class="combo" id="acombo"></div>
+      <div class="combo off" id="atime"></div>
+      <div class="ans-foot"><div class="btn" id="anext"></div></div>
+    </div>
+
+    <!-- ===== RESULT ===== -->
+    <div class="view" id="v-result">
+      <div class="sb"><span>9:41</span><span>100%</span></div>
+      <div class="hd"><span class="ttl">結果発表</span><span class="tag" id="rcat">カテゴリ名</span></div>
+      <div class="score">
+        <div class="big" id="rbig"></div>
+        <div class="rankmsg" id="rmsg"></div>
+      </div>
+      <div class="stats">
+        <div class="card2"><span>最大連続</span><b id="rstreak">0回</b></div>
+        <div class="card2"><span>ボーナス</span><b id="rbonus">+0</b></div>
+        <div class="card2"><span>タイム</span><b id="rtime">0:00</b></div>
+      </div>
+      <div class="total"><span>合計スコア</span><b id="rtotal">0pt</b></div>
+      <div class="acts">
+        <div class="btn alt sm" onclick="go('home')">タイトルへ</div>
+        <div class="btn sm" onclick="startQuiz(state.catIndex)">もう一度</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<button class="replay" onclick="go('home')">↺ 最初から</button>
+
+<script>
+/* ============================================================
+   設定値（調整はここ1か所）
+   ============================================================ */
+var CONFIG={
+  TIME_LIMIT:20,        // 1問あたりの制限時間（秒）
+  TIME_COEF:2,          // 時間ボーナス = 残り秒数 × この係数
+  BASE_POINT:100,       // 正解の基礎点
+  COMBO_STEP:15,        // 連続正解ボーナス = (連続数-1) × この値
+  MIN_Q_FOR_RANK:5,     // これ未満の問題数ではランクを出さない
+  RANKS:[               // 正解率で判定（上から順に判定）
+    {g:'S',min:1.0,c:'#FFB020'},
+    {g:'A',min:0.8,c:'#FF5A5F'},
+    {g:'B',min:0.6,c:'#3C8DFF'},
+    {g:'C',min:0.4,c:'#2FBF71'},
+    {g:'D',min:0,  c:'#7a84a8'}
+  ]
+};
+
+/* 画像プレースホルダ（任意の問題用） */
+var IMG='<svg viewBox="0 0 92 52"><rect width="92" height="52" fill="none"/><path d="M4 48 L30 20 L46 36 L60 22 L88 48 Z" fill="#FFD36B" stroke="#1E2A5A" stroke-width="2"/><circle cx="68" cy="14" r="7" fill="#FF5A5F" stroke="#1E2A5A" stroke-width="2"/></svg>';
+
+/* ============================================================
+   サンプルデータ（本番はユーザーが自作）
+   ============================================================ */
+var CATEGORIES=[
+  {name:'日本の地理',icon:'A',color:'#FF5A5F',questions:[
+    {q:'日本で一番高い山は？',img:true,choices:['富士山','北岳','槍ヶ岳','立山'],correct:0,exp:'富士山は標高3776mで日本最高峰です。'},
+    {q:'日本で一番長い川は？',choices:['利根川','信濃川','石狩川','北上川'],correct:1,exp:'信濃川は全長367kmで日本最長です。'},
+    {q:'47ある日本の行政区分は？',choices:['都道府県','州','郡','区'],correct:0,exp:'1都1道2府43県の計47です。'},
+    {q:'日本で一番大きい湖は？',choices:['霞ヶ浦','琵琶湖','サロマ湖','猪苗代湖'],correct:1,exp:'琵琶湖は滋賀県にある日本最大の湖です。'},
+    {q:'日本の首都は？',choices:['大阪','京都','東京','名古屋'],correct:2,exp:'1868年以降、東京が首都機能を担っています。'}
+  ]},
+  {name:'かんたん理科',icon:'B',color:'#3C8DFF',questions:[
+    {q:'水が氷になる温度は？',choices:['0℃','10℃','-10℃','100℃'],correct:0,exp:'1気圧のもとで水は0℃で凍ります。'},
+    {q:'植物が光で養分を作る働きは？',choices:['呼吸','蒸散','光合成','発酵'],correct:2,exp:'葉緑体が光を使って養分を作ります。'},
+    {q:'地球から一番近い恒星は？',img:true,choices:['月','火星','太陽','金星'],correct:2,exp:'太陽は地球に最も近い恒星です。月は衛星です。'}
+  ]},
+  {name:'アプリ豆知識',icon:'C',color:'#2FBF71',questions:[
+    {q:'Androidアプリの主な開発言語は？',choices:['Swift','Kotlin','Ruby','Go'],correct:1,exp:'現在はKotlinが公式推奨の言語です。'},
+    {q:'画面サイズの単位「dp」の意味は？',choices:['ドット毎インチ','密度非依存ピクセル','データポイント','ディスプレイ比'],correct:1,exp:'density-independent pixel の略です。'},
+    {q:'タップしやすい最小の高さの目安は？',choices:['24dp','36dp','48dp','72dp'],correct:2,exp:'48dp以上が推奨されています。'},
+    {q:'このアプリのランクは何で決まる？',choices:['正解数','正解率','合計点','タイム'],correct:1,exp:'問題数が違っても公平に比べるため正解率で決めます。'},
+    {q:'時間ボーナスはランクに含まれる？',choices:['含まれる','含まれない','半分だけ','問題による'],correct:1,exp:'ボーナスはランクに入れず、合計スコアにのみ反映します。'}
+  ]}
+];
+
+/* ============================================================
+   状態・ロジック
+   ============================================================ */
+var state={};
+var timer=null;
+
+function $(id){return document.getElementById(id)}
+function go(v){['home','cat','quiz','ans','result'].forEach(function(n){$('v-'+n).classList.toggle('on',n===v)});
+  if(v==='home'||v==='cat')stopTimer();
+  if(v==='cat')renderCats();}
+
+function renderCats(){
+  $('catList').innerHTML=CATEGORIES.map(function(c,i){
+    return '<div class="card2 cat" onclick="startQuiz('+i+')"><div class="ic" style="--c:'+c.color+'">'+c.icon+'</div>'+
+      '<div class="nm"><b>'+c.name+'</b><span>'+c.questions.length+'問</span></div><div class="go">›</div></div>';
+  }).join('');
+}
+
+function startQuiz(ci){
+  var cat=CATEGORIES[ci];
+  state={catIndex:ci,cat:cat,qi:0,total:cat.questions.length,correct:0,streak:0,maxStreak:0,
+         score:0,bonusTotal:0,elapsed:0,timedOut:false,answered:false};
+  go('quiz');
+  loadQuestion();
+}
+
+function loadQuestion(){
+  var q=state.cat.questions[state.qi];
+  state.answered=false;state.timedOut=false;state.remaining=CONFIG.TIME_LIMIT;
+  $('qnum').textContent='Q'+(state.qi+1)+' / '+state.total;
+  $('anum').textContent='Q'+(state.qi+1)+' / '+state.total;
+  $('qcat').textContent=state.cat.name;
+  $('qscore').textContent=state.score+'pt';
+  $('ascore').textContent=state.score+'pt';
+  $('qstreak').textContent=state.streak>=2?(state.streak+'連続正解中'):'';
+  $('qprog').style.width=Math.round(state.qi/state.total*100)+'%';
+  $('qtext').textContent=q.q;
+  $('qimg').style.display=q.img?'grid':'none';
+  if(q.img)$('qimg').innerHTML=IMG;
+  $('qchs').innerHTML=q.choices.map(function(c,i){
+    return '<div class="ch" onclick="answer('+i+')"><span class="l">'+'ABCD'[i]+'</span>'+c+'<span class="r"></span></div>';
+  }).join('');
+  startTimer();
+}
+
+function startTimer(){
+  stopTimer();
+  var end=Date.now()+state.remaining*1000;
+  updateTimer();
+  timer=setInterval(function(){
+    state.remaining=Math.max(0,(end-Date.now())/1000);
+    updateTimer();
+    if(state.remaining<=0){state.timedOut=true;stopTimer();}
+  },50);
+}
+function stopTimer(){if(timer){clearInterval(timer);timer=null;}}
+function updateTimer(){
+  var r=state.remaining;
+  $('qtime').textContent=Math.ceil(r)+'秒';
+  var ratio=r/CONFIG.TIME_LIMIT;
+  var bar=$('qtbar');bar.style.width=(ratio*100)+'%';
+  var tb=bar.parentElement;tb.className='tbar'+(ratio<=0.25?' danger':ratio<=0.5?' warn':'');
+}
+
+function answer(choice){
+  if(state.answered)return;
+  state.answered=true;
+  stopTimer();
+  state.elapsed+=(CONFIG.TIME_LIMIT-state.remaining);
+  var q=state.cat.questions[state.qi];
+  var ok=choice===q.correct;
+
+  // 採点
+  var base=0,combo=0,timeb=0;
+  if(ok){
+    state.correct++;
+    state.streak++;
+    state.maxStreak=Math.max(state.maxStreak,state.streak);
+    base=CONFIG.BASE_POINT;
+    combo=Math.max(0,state.streak-1)*CONFIG.COMBO_STEP;
+    // 時間ボーナス：時間切れ(0秒)なら+0。正誤判定・連続正解には不干渉
+    timeb=Math.round(state.remaining)*CONFIG.TIME_COEF;
+  }else{
+    state.streak=0;
+  }
+  var gained=base+combo+timeb;
+  state.score+=gained;
+  state.bonusTotal+=combo+timeb;
+
+  renderAnswer(q,choice,ok,combo,timeb);
+  go('ans');
+}
+
+function renderAnswer(q,choice,ok,combo,timeb){
+  $('ascore').textContent=state.score+'pt';
+  $('averdict').innerHTML=ok
+    ?'<div class="mark">○</div><h3>せいかい!</h3>'
+    :'<div class="mark x">×</div><h3 class="x">ざんねん…</h3>';
+  $('acorrect').textContent=q.choices[q.correct];
+  $('ayou').textContent=ok?'':'あなたの答え: '+q.choices[choice];
+  $('aexp').textContent=q.exp;
+
+  var ac=$('acombo');
+  if(ok&&combo>0){ac.className='combo';ac.innerHTML='<span>'+state.streak+'連続正解ボーナス</span><span><em>+'+combo+'</em> pt</span>';ac.style.display='flex';}
+  else if(!ok){ac.className='combo off';ac.innerHTML='<span>連続正解がリセットされました</span>';ac.style.display='flex';}
+  else{ac.style.display='none';}
+
+  var at=$('atime');
+  if(ok){
+    at.style.display='flex';
+    if(timeb>0){at.style.opacity='1';at.innerHTML='<span>時間ボーナス（のこり'+Math.round(state.remaining)+'秒）</span><span><em>+'+timeb+'</em> pt</span>';}
+    else{at.style.opacity='.85';at.innerHTML='<span>時間切れ：時間ボーナスなし</span><span>+0 pt</span>';}
+  }else{at.style.display='none';}
+
+  var last=state.qi>=state.total-1;
+  $('anext').textContent=last?'結果を見る':'次の問題へ';
+  $('anext').onclick=last?showResult:nextQuestion;
+}
+
+function nextQuestion(){state.qi++;loadQuestion();go('quiz');}
+
+function showResult(){
+  var rate=state.correct/state.total;
+  var showRank=state.total>=CONFIG.MIN_Q_FOR_RANK;
+  var rank=CONFIG.RANKS.find(function(r){return rate>=r.min;});
+  var big=$('rbig');
+  $('rcat').textContent=state.cat.name;
+  if(showRank){
+    var hi=rate>=0.6;
+    big.className='big'+(hi?'':' lo');
+    big.style.background=hi?'#FFE066':'';big.style.color=rank.c;
+    big.innerHTML='<i>ランク</i><b>'+rank.g+'</b><span>'+state.correct+' / '+state.total+' 問せいかい</span>';
+    // 次ランクまでの案内
+    var idx=CONFIG.RANKS.indexOf(rank);
+    var msg='';
+    if(idx>0){
+      var up=CONFIG.RANKS[idx-1];
+      var need=Math.ceil(up.min*state.total)-state.correct;
+      if(need<1)need=1;
+      msg='あと'+need+'問で '+up.g+' ランク!';
+    }else{msg='全問せいかい！パーフェクト!';}
+    $('rmsg').textContent=msg;$('rmsg').className='rankmsg'+(hi?'':' lo');
+  }else{
+    big.className='big';big.style.background='#FFE066';big.style.color='#FF5A5F';
+    big.innerHTML='<b style="font-size:40px">'+state.correct+'</b><span>/ '+state.total+' 問せいかい</span>';
+    $('rmsg').textContent='5問以上でランクがつきます';$('rmsg').className='rankmsg lo';
+  }
+  $('rstreak').textContent=state.maxStreak+'回';
+  $('rbonus').textContent='+'+state.bonusTotal;
+  $('rtime').textContent=fmtTime(state.elapsed);
+  $('rtotal').textContent=state.score+'pt';
+  go('result');
+}
+
+function fmtTime(sec){var s=Math.round(sec);return Math.floor(s/60)+':'+('0'+(s%60)).slice(-2);}
+function quitToTitle(){if(confirm('タイトルへ戻りますか？（進行中のクイズは終了します）'))go('home');}
+
+renderCats();
+</script>
+</body>
+</html>
