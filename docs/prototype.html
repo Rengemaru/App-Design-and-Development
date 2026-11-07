@@ -211,12 +211,12 @@ body{margin:0;min-height:100vh;background:var(--bg);color:var(--fg);font-family:
    ============================================================ */
 var CONFIG={
   TIME_LIMIT:20,        // 1問あたりの制限時間（秒）
-  TIME_COEF:2,          // 時間ボーナス = 残り秒数 × この係数
+  TIME_COEF:0.5,        // 時間ボーナス = 残り秒数 × この係数（20秒満タンで最大+10pt）
   BASE_POINT:100,       // 正解の基礎点
   COMBO_STEP:15,        // 連続正解ボーナス = (連続数-1) × この値
   MIN_Q_FOR_RANK:5,     // これ未満の問題数ではランクを出さない
-  RANKS:[               // 正解率で判定（上から順に判定）
-    {g:'S',min:1.0,c:'#FFB020'},
+  RANKS:[               // 獲得スコア ÷ 理論最大スコア で判定（上から順に判定）
+    {g:'S',min:0.92,c:'#FFB020'},
     {g:'A',min:0.8,c:'#FF5A5F'},
     {g:'B',min:0.6,c:'#3C8DFF'},
     {g:'C',min:0.4,c:'#2FBF71'},
@@ -247,8 +247,8 @@ var CATEGORIES=[
     {q:'Androidアプリの主な開発言語は？',choices:['Swift','Kotlin','Ruby','Go'],correct:1,exp:'現在はKotlinが公式推奨の言語です。'},
     {q:'画面サイズの単位「dp」の意味は？',choices:['ドット毎インチ','密度非依存ピクセル','データポイント','ディスプレイ比'],correct:1,exp:'density-independent pixel の略です。'},
     {q:'タップしやすい最小の高さの目安は？',choices:['24dp','36dp','48dp','72dp'],correct:2,exp:'48dp以上が推奨されています。'},
-    {q:'このアプリのランクは何で決まる？',choices:['正解数','正解率','合計点','タイム'],correct:1,exp:'問題数が違っても公平に比べるため正解率で決めます。'},
-    {q:'時間ボーナスはランクに含まれる？',choices:['含まれる','含まれない','半分だけ','問題による'],correct:1,exp:'ボーナスはランクに入れず、合計スコアにのみ反映します。'}
+    {q:'このアプリのランクは何で決まる？',choices:['正解数','スコア÷理論最大','タイムだけ','運'],correct:1,exp:'獲得スコアを理論最大スコアで割った比率でランクを決めます。'},
+    {q:'時間ボーナスはランクに含まれる？',choices:['含まれる','含まれない','半分だけ','問題による'],correct:0,exp:'ランクはスコア比で決まり、スコアにはボーナスが含まれるため反映されます。'}
   ]}
 ];
 
@@ -333,7 +333,7 @@ function answer(choice){
     base=CONFIG.BASE_POINT;
     combo=Math.max(0,state.streak-1)*CONFIG.COMBO_STEP;
     // 時間ボーナス：時間切れ(0秒)なら+0。正誤判定・連続正解には不干渉
-    timeb=Math.round(state.remaining)*CONFIG.TIME_COEF;
+    timeb=Math.round(state.remaining*CONFIG.TIME_COEF);
   }else{
     state.streak=0;
   }
@@ -373,26 +373,35 @@ function renderAnswer(q,choice,ok,combo,timeb){
 
 function nextQuestion(){state.qi++;loadQuestion();go('quiz');}
 
+/* 全問パーフェクト（全正解・時間ボーナス満タン・連続継続）の理論最大スコア */
+function theoreticalMax(n){
+  var maxTime=CONFIG.TIME_LIMIT*CONFIG.TIME_COEF; // 1問の時間ボーナス上限
+  var sum=0;
+  for(var i=1;i<=n;i++){sum+=CONFIG.BASE_POINT+maxTime+(i-1)*CONFIG.COMBO_STEP;}
+  return sum;
+}
+
 function showResult(){
-  var rate=state.correct/state.total;
+  var theo=theoreticalMax(state.total);
+  var ratio=theo>0?state.score/theo:0;      // 獲得スコア ÷ 理論最大スコア
   var showRank=state.total>=CONFIG.MIN_Q_FOR_RANK;
-  var rank=CONFIG.RANKS.find(function(r){return rate>=r.min;});
+  var rank=CONFIG.RANKS.find(function(r){return ratio>=r.min;});
   var big=$('rbig');
   $('rcat').textContent=state.cat.name;
   if(showRank){
-    var hi=rate>=0.6;
+    var hi=ratio>=0.6;
     big.className='big'+(hi?'':' lo');
     big.style.background=hi?'#FFE066':'';big.style.color=rank.c;
     big.innerHTML='<i>ランク</i><b>'+rank.g+'</b><span>'+state.correct+' / '+state.total+' 問せいかい</span>';
-    // 次ランクまでの案内
+    // 次ランクまでの案内（スコア基準）
     var idx=CONFIG.RANKS.indexOf(rank);
     var msg='';
     if(idx>0){
       var up=CONFIG.RANKS[idx-1];
-      var need=Math.ceil(up.min*state.total)-state.correct;
+      var need=Math.ceil(up.min*theo)-state.score;
       if(need<1)need=1;
-      msg='あと'+need+'問で '+up.g+' ランク!';
-    }else{msg='全問せいかい！パーフェクト!';}
+      msg='あと'+need+'ptで '+up.g+' ランク!';
+    }else{msg='最高ランク達成！すばらしい!';}
     $('rmsg').textContent=msg;$('rmsg').className='rankmsg'+(hi?'':' lo');
   }else{
     big.className='big';big.style.background='#FFE066';big.style.color='#FF5A5F';

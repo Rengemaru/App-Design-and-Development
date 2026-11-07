@@ -190,7 +190,7 @@ p{margin:0}.mute{color:var(--mute)}
         <div class="bx f" style="flex-direction:column;gap:2px;position:relative"><small class="mute" style="font-size:11px">答え</small><b style="font-size:19px">正解の選択肢</b><span class="pin" style="left:-8px;top:-8px">3</span></div>
         <div style="position:relative;display:grid;gap:6px"><div class="ln"></div><div class="ln"></div><div class="ln s"></div><span class="pin" style="left:-8px;top:-6px">4</span></div>
         <div class="bx f" style="justify-content:space-between;position:relative"><span>連続正解ボーナス</span><b>+30 pt</b><span class="pin" style="left:-8px;top:-8px">5</span></div>
-        <div class="bx f" style="justify-content:space-between;position:relative"><span>時間ボーナス</span><b>+28 pt</b><span class="pin" style="left:-8px;top:-8px">6</span></div>
+        <div class="bx f" style="justify-content:space-between;position:relative"><span>時間ボーナス</span><b>+7 pt</b><span class="pin" style="left:-8px;top:-8px">6</span></div>
         <div class="gap"></div>
         <div class="bx btn" style="position:relative">次の問題へ<span class="pin" style="left:-8px;top:-8px">7</span></div>
       </div>
@@ -218,7 +218,7 @@ p{margin:0}.mute{color:var(--mute)}
         <div class="c" style="font-size:16px;font-weight:700;position:relative">あと1問で S ランク!<span class="pin" style="left:20px;top:-6px">3</span></div>
         <div class="grid3" style="position:relative">
           <div class="bx f" style="flex-direction:column"><small class="mute" style="font-size:10px">最大連続</small><b>3回</b></div>
-          <div class="bx f" style="flex-direction:column"><small class="mute" style="font-size:10px">ボーナス</small><b>+58</b></div>
+          <div class="bx f" style="flex-direction:column"><small class="mute" style="font-size:10px">ボーナス</small><b>+37</b></div>
           <div class="bx f" style="flex-direction:column"><small class="mute" style="font-size:10px">タイム</small><b>0:48</b></div>
           <span class="pin" style="left:-8px;top:-8px">4</span>
         </div>
@@ -239,21 +239,23 @@ p{margin:0}.mute{color:var(--mute)}
 
   <div class="card tw">
     <h2>ランク表記の考え方</h2>
+    <p class="mute" style="font-size:12.5px;margin-bottom:10px">ランクは <b>獲得スコア ÷ 理論最大スコア</b> で決める。理論最大 = 全問正解・時間ボーナス満タン・連続正解が最後まで続いたときのスコア。5問なら 700pt。Sは92%以上とし、全問正解すれば時間に関わらずSを狙えるようにしている。</p>
     <table class="spec">
-      <tr><th>ランク</th><th>正解率</th><th>5問のとき</th></tr>
-      <tr><td>S</td><td>100%</td><td>5問せいかい</td></tr>
-      <tr><td>A</td><td>80%以上</td><td>4問</td></tr>
-      <tr><td>B</td><td>60%以上</td><td>3問</td></tr>
-      <tr><td>C</td><td>40%以上</td><td>2問</td></tr>
-      <tr><td>D</td><td>40%未満</td><td>0〜1問</td></tr>
+      <tr><th>ランク</th><th>スコア比</th><th>5問(理論最大700pt)の目安</th></tr>
+      <tr><td>S</td><td>92%以上</td><td>644pt以上</td></tr>
+      <tr><td>A</td><td>80%以上</td><td>560pt以上</td></tr>
+      <tr><td>B</td><td>60%以上</td><td>420pt以上</td></tr>
+      <tr><td>C</td><td>40%以上</td><td>280pt以上</td></tr>
+      <tr><td>D</td><td>40%未満</td><td>280pt未満</td></tr>
     </table>
     <ul style="margin:12px 0 0;padding-left:20px;display:grid;gap:4px">
-      <li><b>正解数ではなく正解率で決める。</b>カテゴリを自分で作るので問題数がバラバラです。5問でも20問でも同じ基準で比べられます。</li>
-      <li><b>ボーナス点はランクに入れない。</b>ランクは正解率だけで決めると、カテゴリ同士を公平に比べられます。</li>
-      <li><b>問題数が少ないときは注意。</b>1問だとSかDしかなくなります。5問以上でランクを出し、それ未満は「○問せいかい」の表示だけにするのがおすすめです。</li>
-      <li><b>低いランクは励ます言葉を添える。</b>次のランクまでの距離を見せ、「もう一度」を押したくなるようにします。</li>
-      <li><b>色だけに頼らない。</b>ランクは文字で読めるので、色の区別がつきにくくても伝わります。</li>
-      <li><b>基準の数字は1か所にまとめる。</b>アプリを作るとき、80%や60%を設定値として持っておくと、あとから簡単に調整できます。</li>
+      <li><b>正解数ではなくスコア比で決める。</b>理論最大との割合で見るので、問題数がバラバラでも同じ基準で比べられます。</li>
+      <li><b>Sは92%以上。</b>全問正解なら時間ボーナスが0でもスコア比は約93%になるため、正解を取りきればSが狙えます。時間は上乗せ要素という位置づけです。</li>
+      <li><b>ボーナスもランクに反映される。</b>スコアには連続正解・時間ボーナスが含まれるため、速く正確に解くほどランクが上がります。正解の価値を主役にするため時間ボーナスは控えめ(1問最大+10)にしています。</li>
+      <li><b>問題数が少ないときは注意。</b>5問以上でランクを出し、それ未満は「○問せいかい」の表示だけにするのがおすすめです。</li>
+      <li><b>低いランクは励ます言葉を添える。</b>次のランクまでの不足ポイント(例: あと40ptで A ランク)を見せ、「もう一度」を押したくなるようにします。</li>
+      <li><b>色だけに頼らない。</b>ランクは文字(S・A・B・C・D)で読めるので、色の区別がつきにくくても伝わります。</li>
+      <li><b>基準の数字は1か所にまとめる。</b>各ボーナスの係数や80%・60%の閾値を設定値として持っておくと、あとから調整できます。</li>
     </ul>
   </div>
 
@@ -267,7 +269,7 @@ p{margin:0}.mute{color:var(--mute)}
       <tr><td>問題カード</td><td>問題</td><td>画像は任意</td></tr>
       <tr><td>選択肢ボタン</td><td>問題</td><td>A〜Dの4つ。高さ48 dp以上</td></tr>
       <tr><td>連続正解チップ</td><td>問題、答え、結果</td><td>ボーナス点の加算を見せる</td></tr>
-      <tr><td>カウントダウンタイマー</td><td>問題</td><td>1問20秒(設定値)。残り秒数×係数が時間ボーナス。0でボーナスのみ無効、解答は継続可</td></tr>
+      <tr><td>カウントダウンタイマー</td><td>問題</td><td>1問20秒(設定値)。残り秒数×係数(0.5)が時間ボーナス(最大+10)。0でボーナスのみ無効、解答は継続可</td></tr>
     </table>
   </div>
 
@@ -275,10 +277,10 @@ p{margin:0}.mute{color:var(--mute)}
     <h2>時間ボーナスの考え方</h2>
     <ul style="margin:0;padding-left:20px;display:grid;gap:4px">
       <li><b>1問ごとにカウントダウンする。</b>初期値は20秒(設定値)。画像つきや長文も読める長さにする。</li>
-      <li><b>時間ボーナス = 残り秒数 × 係数。</b>速いほど線形に加点。係数は設定値として1か所に持ち、あとから調整できるようにする。</li>
+      <li><b>時間ボーナス = 残り秒数 × 係数(0.5)。</b>20秒満タンで最大+10pt。基礎点(100)より控えめにして、正解そのものの価値を主役にする。係数は設定値として1か所に持つ。</li>
       <li><b>0秒になっても解答は続けられる。</b>時間切れは「時間ボーナスが+0になるだけ」で、正誤判定や連続正解には影響しない。正解すれば連続正解は継続する。</li>
-      <li><b>ランクには入れない。</b>連続正解ボーナスと同じく、時間ボーナスも正解率で決めるランクには含めない。</li>
-      <li><b>合計スコアには入れる。</b>結果画面の合計スコアとボーナス表示には時間ボーナスを含める。</li>
+      <li><b>スコアに含まれるのでランクにも効く。</b>ランクは「獲得スコア ÷ 理論最大スコア」で決まるため、時間ボーナス・連続正解ボーナスもランクに反映される。</li>
+      <li><b>合計スコアに入れる。</b>結果画面の合計スコアとボーナス表示には時間ボーナスを含める。</li>
     </ul>
   </div>
 </div>

@@ -137,9 +137,9 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 
   <div class="card">
     <h2>ランク表記</h2>
-    <p class="mute" style="font-size:12.5px;margin-bottom:10px">結果発表は、正解数の代わりに「ランク」を大きく見せます。基準は正解率です。</p>
+    <p class="mute" style="font-size:12.5px;margin-bottom:10px">結果発表は、正解数の代わりに「ランク」を大きく見せます。基準は <b>獲得スコア ÷ 理論最大スコア</b>（全問正解・時間満タン・連続継続で得られる最大点）です。</p>
     <div class="ranks">
-      <div class="rk" style="--c:#FFB020"><b>S</b><span>全問せいかい<br>100%</span></div>
+      <div class="rk" style="--c:#FFB020"><b>S</b><span>スコア比<br>92%以上</span></div>
       <div class="rk" style="--c:#FF5A5F"><b>A</b><span>80%以上</span></div>
       <div class="rk" style="--c:#3C8DFF"><b>B</b><span>60%以上</span></div>
       <div class="rk" style="--c:#2FBF71"><b>C</b><span>40%以上</span></div>
@@ -147,12 +147,12 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
     </div>
     <h2 style="font-size:14px">ランクについての考え方</h2>
     <ul class="tips">
-      <li><b>正解数ではなく正解率で決める。</b>カテゴリを自分で作るので問題数がバラバラです。5問でも20問でも同じ基準で比べられます。</li>
-      <li><b>ボーナス点はランクに入れない。</b>連続正解で点が増えても、ランクは正解率だけで決めると、カテゴリ同士を公平に比べられます。</li>
-      <li><b>問題数が少ないときは注意。</b>1問だとSかDしかなくなります。5問以上でランクを出し、それ未満は「○問せいかい」の表示だけにするのがおすすめです。</li>
-      <li><b>低いランクは励ます言葉を添える。</b>「あと1問でCランク!」のように次のランクまでの距離を見せ、「もう一度」を押したくなるようにします。</li>
+      <li><b>正解数ではなくスコア比で決める。</b>理論最大との割合で見るので、問題数がバラバラでも同じ基準で比べられます。</li>
+      <li><b>ボーナスもランクに反映される。</b>スコアには連続正解・時間ボーナスが含まれるため、速く正確に解くほどランクが上がります。時間ボーナスは1問最大+10に抑え、正解の価値を主役にしています。</li>
+      <li><b>問題数が少ないときは注意。</b>5問以上でランクを出し、それ未満は「○問せいかい」の表示だけにするのがおすすめです。</li>
+      <li><b>低いランクは励ます言葉を添える。</b>「あと40ptでAランク!」のように次のランクまでの不足ポイントを見せ、「もう一度」を押したくなるようにします。</li>
       <li><b>色だけに頼らない。</b>ランクは文字(S・A・B・C・D)で読めるので、色の区別がつきにくくても伝わります。</li>
-      <li><b>基準の数字は1か所にまとめる。</b>アプリを作るとき、80%や60%を設定値として持っておくと、あとから簡単に調整できます。</li>
+      <li><b>基準の数字は1か所にまとめる。</b>各ボーナスの係数や80%・60%の閾値を設定値として持っておくと、あとから調整できます。</li>
     </ul>
   </div>
 
@@ -176,15 +176,15 @@ function chs(state){return '<div class="chs">'+CH.map(function(c,i){
   if(state==='ng'&&i===1){cls+=' ng';r='<span class="r" style="color:#3C8DFF">×</span>'}
   if(state==='ng'&&i===0){cls+=' ok';r='<span class="r" style="color:#FF5A5F">○</span>'}
   return '<div class="'+cls+'"><span class="l">'+'ABCD'[i]+'</span>'+c+r+'</div>'}).join('')+'</div>'}
-function qscr(state){return '<div class="scr">'+sb()+hdr(2,120)+'<div class="prog"><i></i></div><div class="qmeta"><span class="tag">カテゴリ名</span><span>3連続正解中</span></div><div class="qmeta"><span>⏱ のこり <b style="font-weight:400;font-size:17px">14</b> 秒</span><span style="opacity:.75">いま答えると +28pt</span></div><div class="card2 qcard"><div class="img">'+POT+'</div><div class="qtext">問題文が入ります。2行から3行くらいまで。</div></div>'+chs(state)+'</div>'}
+function qscr(state){return '<div class="scr">'+sb()+hdr(2,120)+'<div class="prog"><i></i></div><div class="qmeta"><span class="tag">カテゴリ名</span><span>3連続正解中</span></div><div class="qmeta"><span>⏱ のこり <b style="font-weight:400;font-size:17px">14</b> 秒</span><span style="opacity:.75">いま答えると +7pt</span></div><div class="card2 qcard"><div class="img">'+POT+'</div><div class="qtext">問題文が入ります。2行から3行くらいまで。</div></div>'+chs(state)+'</div>'}
 function ans(ok,last){
   var head=ok?'<div class="mark">○</div><h3>せいかい!</h3>':'<div class="mark x">×</div><h3 class="x">ざんねん…</h3>';
   var you=ok?'':'<div class="you">あなたの答え: 選択肢 2</div>';
   var combo=ok?'<div class="combo"><span>連続正解ボーナス</span><span><em>+30</em> pt</span></div>':'<div class="combo off"><span>連続正解がリセットされました</span></div>';
-  var timeb=ok?'<div class="combo off" style="opacity:1"><span>時間ボーナス（のこり14秒）</span><span><em>+28</em> pt</span></div>':'';
+  var timeb=ok?'<div class="combo off" style="opacity:1"><span>時間ボーナス（のこり14秒）</span><span><em>+7</em> pt</span></div>':'';
   return '<div class="scr s-ans">'+sb()+hdr(last?5:2,ok?150:120)+'<div class="verdict">'+head+'</div><div class="card2 ans"><small>答え</small><b>選択肢 1</b>'+you+'</div><div class="exp">ここに自分で書いた解説が入ります。</div>'+combo+timeb+'<div class="btn">'+(last?'結果を見る':'次の問題へ')+'</div></div>'}
 function res(hi){
-  return '<div class="scr s-res">'+sb()+'<div class="hd"><span class="ttl">結果発表</span><span class="tag back">カテゴリ名</span></div><div class="score"><div class="big'+(hi?'':' lo')+'"><i style="font-style:normal;font-size:12px">ランク</i><b>'+(hi?'A':'D')+'</b><span>'+(hi?4:1)+' / 5 問せいかい</span></div><div class="rank'+(hi?'':' lo')+'">'+(hi?'あと1問で S ランク!':'あと1問で C ランク!')+'</div></div><div class="stats"><div class="card2"><span>最大連続</span><b>'+(hi?'3回':'1回')+'</b></div><div class="card2"><span>ボーナス</span><b>'+(hi?'+58':'+0')+'</b></div><div class="card2"><span>タイム</span><b>'+(hi?'0:48':'1:12')+'</b></div></div><div class="total"><span>合計スコア</span><b>'+(hi?'430pt':'100pt')+'</b></div><div class="acts"><div class="btn alt sm">タイトルへ</div><div class="btn sm">もう一度</div></div></div>'}
+  return '<div class="scr s-res">'+sb()+'<div class="hd"><span class="ttl">結果発表</span><span class="tag back">カテゴリ名</span></div><div class="score"><div class="big'+(hi?'':' lo')+'"><i style="font-style:normal;font-size:12px">ランク</i><b>'+(hi?'A':'D')+'</b><span>'+(hi?4:1)+' / 5 問せいかい</span></div><div class="rank'+(hi?'':' lo')+'">'+(hi?'あと1問で S ランク!':'あと1問で C ランク!')+'</div></div><div class="stats"><div class="card2"><span>最大連続</span><b>'+(hi?'3回':'1回')+'</b></div><div class="card2"><span>ボーナス</span><b>'+(hi?'+37':'+0')+'</b></div><div class="card2"><span>タイム</span><b>'+(hi?'0:48':'1:12')+'</b></div></div><div class="total"><span>合計スコア</span><b>'+(hi?'430pt':'100pt')+'</b></div><div class="acts"><div class="btn alt sm">タイトルへ</div><div class="btn sm">もう一度</div></div></div>'}
 var title='<div class="scr s-title">'+sb()+'<div class="mid"><div class="logo"><small>自分で作るクイズ</small><h1>クイズ帳</h1></div><div class="q">?</div></div><div><div class="btn">スタート</div><div class="foot">カテゴリを作って、問題を書こう</div></div></div>';
 var catEmpty='<div class="scr">'+sb()+'<div class="hd"><span class="back">‹ 戻る</span><span class="ttl">カテゴリ選択</span></div><div class="empty"><div class="q">?</div><b>カテゴリがまだありません</b><span>カテゴリを作って、<br>問題を書いていきましょう</span></div><div class="btn">＋ カテゴリを追加</div></div>';
 var cat='<div class="scr">'+sb()+'<div class="hd"><span class="back">‹ 戻る</span><span class="ttl">カテゴリ選択</span></div><div class="sub">挑戦するカテゴリをえらぼう</div><div class="cats">'+CATS.map(function(c){return '<div class="card2 cat"><div class="ic">'+c[0]+'</div><div class="nm"><b>'+c[1]+'</b><span>'+c[2]+'</span></div><div class="go">›</div></div>'}).join('')+'</div></div>';
