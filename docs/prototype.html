@@ -27,6 +27,12 @@ body{margin:0;min-height:100vh;background:var(--bg);color:var(--fg);font-family:
   font-family:'Yusei Magic','Zen Maru Gothic',sans-serif;font-weight:400;font-size:13px;line-height:1.4;
   padding:12px 16px 18px;display:flex;flex-direction:column;gap:10px}
 .sb{display:flex;justify-content:space-between;font:700 10px system-ui,sans-serif;opacity:.7;padding:0 4px}
+.bat-wrap{display:inline-flex;align-items:center;gap:4px}
+.bat{display:inline-flex;align-items:center}
+.bat .cell{position:relative;width:22px;height:11px;border:1.5px solid currentColor;border-radius:3px;padding:1.5px}
+.bat .cell::after{content:"";position:absolute;right:-3px;top:50%;transform:translateY(-50%);width:2px;height:5px;background:currentColor;border-radius:0 1px 1px 0}
+.bat .cell i{display:block;height:100%;background:currentColor;border-radius:1px}
+.bat.low{color:#FF5A5F}
 .hd{display:flex;align-items:center;justify-content:space-between;gap:8px}
 .ttl{font-size:18px;line-height:1.2}
 .back,.pt,.tag{background:#fff;border:var(--bd) solid var(--line2);border-radius:99px;box-shadow:var(--shs)}
@@ -119,7 +125,7 @@ body{margin:0;min-height:100vh;background:var(--bg);color:var(--fg);font-family:
   <div class="scr">
     <!-- ===== HOME ===== -->
     <div class="view on" id="v-home">
-      <div class="sb"><span>9:41</span><span>100%</span></div>
+      <div class="sb"><span>9:41</span><span class="bat-wrap"></span></div>
       <div class="mid">
         <div class="logo"><small>自分で作るクイズ</small><h1>クイズ帳</h1></div>
         <div class="q">?</div>
@@ -132,7 +138,7 @@ body{margin:0;min-height:100vh;background:var(--bg);color:var(--fg);font-family:
 
     <!-- ===== CATEGORY ===== -->
     <div class="view" id="v-cat">
-      <div class="sb"><span>9:41</span><span>100%</span></div>
+      <div class="sb"><span>9:41</span><span class="bat-wrap"></span></div>
       <div class="hd"><span class="back" onclick="go('home')">‹ 戻る</span><span class="ttl">カテゴリ選択</span></div>
       <div class="sub">挑戦するカテゴリをえらぼう</div>
       <div class="cats" id="catList"></div>
@@ -140,7 +146,7 @@ body{margin:0;min-height:100vh;background:var(--bg);color:var(--fg);font-family:
 
     <!-- ===== QUESTION ===== -->
     <div class="view" id="v-quiz">
-      <div class="sb"><span>9:41</span><span>100%</span></div>
+      <div class="sb"><span>9:41</span><span class="bat-wrap"></span></div>
       <div class="hd">
         <span class="back" onclick="quitToTitle()">‹ タイトルへ</span>
         <span class="ttl" style="font-size:15px" id="qnum">Q1 / 5</span>
@@ -161,7 +167,7 @@ body{margin:0;min-height:100vh;background:var(--bg);color:var(--fg);font-family:
 
     <!-- ===== ANSWER ===== -->
     <div class="view" id="v-ans">
-      <div class="sb"><span>9:41</span><span>100%</span></div>
+      <div class="sb"><span>9:41</span><span class="bat-wrap"></span></div>
       <div class="hd">
         <span class="back" onclick="quitToTitle()">‹ タイトルへ</span>
         <span class="ttl" style="font-size:15px" id="anum">Q1 / 5</span>
@@ -177,7 +183,7 @@ body{margin:0;min-height:100vh;background:var(--bg);color:var(--fg);font-family:
 
     <!-- ===== RESULT ===== -->
     <div class="view" id="v-result">
-      <div class="sb"><span>9:41</span><span>100%</span></div>
+      <div class="sb"><span>9:41</span><span class="bat-wrap"></span></div>
       <div class="hd"><span class="ttl">結果発表</span><span class="tag" id="rcat">カテゴリ名</span></div>
       <div class="score">
         <div class="big" id="rbig"></div>
@@ -402,6 +408,22 @@ function showResult(){
 
 function fmtTime(sec){var s=Math.round(sec);return Math.floor(s/60)+':'+('0'+(s%60)).slice(-2);}
 function quitToTitle(){if(confirm('タイトルへ戻りますか？（進行中のクイズは終了します）'))go('home');}
+
+/* ============================================================
+   ステータスバーの電池アイコン（全画面共通）
+   BATTERY_LEVEL（0〜100）の1変数で全画面の残量を管理する。
+   BATTERY_LOW 以下で赤くなる。
+   ============================================================ */
+var BATTERY_LEVEL=19;   // ← ここを変えると全画面の残量が変わる
+var BATTERY_LOW=20;     // ← この値以下で赤くなる
+function renderBatteries(){
+  var lv=Math.max(0,Math.min(100,BATTERY_LEVEL));
+  var low=lv<=BATTERY_LOW;
+  document.querySelectorAll('.bat-wrap').forEach(function(w){
+    w.innerHTML=lv+'%<span class="bat'+(low?' low':'')+'"><span class="cell"><i style="width:'+lv+'%"></i></span></span>';
+  });
+}
+renderBatteries();
 
 renderCats();
 </script>
