@@ -1,0 +1,270 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>クイズ帳 ワイヤーフレーム</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Yusei+Magic&family=Zen+Maru+Gothic:wght@500;700;900&display=swap">
+<style>
+/* Layout: flow strip on top, then 5 low-fidelity screens in a row, each with numbered callouts and a note list below */
+:root{--bg:#EEF1F6;--fg:#1f2433;--mute:#5d647a;--paper:#fff;--wire:#4a5168;--wire-soft:#c6cbd9;--fill:#E4E8F1;--pin:#FF5A5F;--pinf:#fff;--card:#fff;--line:#d3d8e6;--hl:#FFE066}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--bg:#14161f;--fg:#e8eaf3;--mute:#a1a7bd;--paper:#1d2030;--wire:#aab1c9;--wire-soft:#40455c;--fill:#2a2e44;--card:#1d2030;--line:#383d55;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#14161f;--fg:#e8eaf3;--mute:#a1a7bd;--paper:#1d2030;--wire:#aab1c9;--wire-soft:#40455c;--fill:#2a2e44;--card:#1d2030;--line:#383d55;color-scheme:dark}
+body{background:var(--bg);color:var(--fg);font-family:'Zen Maru Gothic',system-ui,sans-serif;font-size:14px;line-height:1.6;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:28px 56px}
+.wrap{max-width:1560px;margin:0 auto;display:grid;gap:28px}
+h1{margin:0;font-size:clamp(24px,4.5vw,34px);font-weight:900;line-height:1.25}
+h2{margin:0 0 10px;font-size:16px;font-weight:900}
+p{margin:0}.mute{color:var(--mute)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px;min-width:0}
+.meta{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+.meta ul{margin:0;padding-left:18px}.meta li{margin:2px 0}
+/* flow */
+.flow{display:flex;align-items:stretch;gap:8px;overflow-x:auto;padding-bottom:6px}
+.fn{flex:none;min-width:116px;border:2px solid var(--wire);border-radius:8px;padding:8px 10px;text-align:center;font-weight:700;background:var(--paper)}
+.fn small{display:block;font-weight:500;color:var(--mute);font-size:11px}
+.fa{flex:none;align-self:center;text-align:center;font-size:11px;color:var(--mute);min-width:64px;line-height:1.3}
+.fa b{display:block;color:var(--wire);font-size:16px}
+.back-note{margin-top:8px;font-size:12px;color:var(--mute)}
+/* screens */
+.row{display:flex;gap:26px;overflow-x:auto;padding:4px 4px 12px;align-items:flex-start}
+.col{flex:none;width:300px;display:grid;gap:12px}
+.col h3{margin:0;font-size:15px;font-weight:900;display:flex;gap:8px;align-items:center}
+.col h3 span{font-weight:500;font-size:12px;color:var(--mute)}
+.scr{position:relative;width:300px;height:620px;background:var(--paper);border:2px solid var(--wire);border-radius:22px;padding:12px 16px 18px;display:flex;flex-direction:column;gap:10px;overflow:hidden;font-family:'Yusei Magic','Zen Maru Gothic',sans-serif;
+  background-image:repeating-linear-gradient(transparent 0 23px,var(--wire-soft) 23px 24px);background-color:var(--paper)}
+.scr::before{content:"";position:absolute;inset:0;background:var(--paper);opacity:.82;z-index:0}
+.scr>*{position:relative;z-index:1}
+.sb{display:flex;justify-content:space-between;font-size:10px;color:var(--mute);padding:0 2px}
+.bx{border:2px solid var(--wire);border-radius:8px;background:var(--paper);position:relative;display:flex;align-items:center;justify-content:center;text-align:center;padding:6px 8px;font-size:13px}
+.bx.f{background:var(--fill)}
+.bx.pill{border-radius:99px;padding:3px 12px;font-size:12px}
+.bx.btn{font-size:17px;padding:13px 8px;font-weight:700}
+.bx.btn.sec{background:transparent}
+.bx.ph{background:linear-gradient(to top right,transparent calc(50% - 1px),var(--wire-soft) 50%,transparent calc(50% + 1px)),linear-gradient(to bottom right,transparent calc(50% - 1px),var(--wire-soft) 50%,transparent calc(50% + 1px)),var(--fill);color:var(--mute)}
+.bx.ph span{background:var(--fill);padding:0 6px}
+.hd{display:flex;align-items:center;justify-content:space-between;gap:8px;min-height:34px}
+.hd .t{font-size:18px;font-weight:700}
+.gap{flex:1}
+.ln{height:8px;background:var(--wire-soft);border-radius:4px}
+.ln.s{width:60%}
+.txt{font-size:13px;line-height:1.5}
+.row2{display:flex;gap:8px}.row2>*{flex:1}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.cat{justify-content:flex-start;gap:10px;text-align:left}
+.cat .ic{flex:none;width:40px;height:40px;border:2px solid var(--wire);border-radius:8px;background:var(--fill);display:grid;place-items:center;font-weight:700}
+.cat .nm{flex:1;min-width:0;line-height:1.3}.cat .nm small{display:block;color:var(--mute);font-size:11px}
+.ch{justify-content:flex-start;gap:10px}
+.ch i{flex:none;width:24px;height:24px;border:2px solid var(--wire);border-radius:50%;display:grid;place-items:center;font-style:normal;font-size:12px}
+.prog{height:10px;border:2px solid var(--wire);border-radius:99px;overflow:hidden;background:var(--paper)}.prog i{display:block;width:40%;height:100%;background:var(--wire-soft)}
+.mark{width:76px;height:76px;border-radius:50%;border:3px solid var(--wire);display:grid;place-items:center;font-size:40px;margin:0 auto;background:var(--paper)}
+.big{width:120px;height:120px;border-radius:50%;border:3px solid var(--wire);display:grid;place-items:center;align-content:center;margin:0 auto;background:var(--paper);line-height:1}
+.big b{font-size:52px}.big small{font-size:12px}
+.c{text-align:center}
+/* pins */
+.pin{position:absolute;z-index:5;width:20px;height:20px;border-radius:50%;background:var(--pin);color:var(--pinf);font:900 11px/20px 'Zen Maru Gothic',sans-serif;text-align:center;box-shadow:0 0 0 2px var(--paper)}
+/* notes */
+.notes{margin:0;padding:0;list-style:none;display:grid;gap:7px;font-size:12.5px}
+.notes li{display:grid;grid-template-columns:20px 1fr;gap:8px;align-items:start}
+.notes .n{width:20px;height:20px;border-radius:50%;background:var(--pin);color:var(--pinf);font:900 11px/20px 'Zen Maru Gothic',sans-serif;text-align:center}
+.notes em{font-style:normal;background:var(--hl);color:#1f2433;border-radius:3px;padding:0 4px;font-size:11.5px;white-space:nowrap}
+.spec td,.spec th{text-align:left;padding:4px 14px 4px 0;font-weight:500;vertical-align:top}.spec th{font-weight:900;color:var(--mute);font-size:12px}
+.spec{border-collapse:collapse;font-size:13px}
+.tw{overflow-x:auto}
+</style>
+
+<div class="wrap">
+  <header style="display:grid;gap:8px">
+    <h1>クイズ帳 ワイヤーフレーム</h1>
+    <p class="mute">ノートブック案の画面構成です。カテゴリは自分で作る仕組みなので、最初は空の状態です。見た目の装飾は外して、配置、部品、画面の移り変わりだけを示しています。赤い番号は画面内の位置と、下の説明に対応しています。</p>
+  </header>
+
+  <div class="meta">
+    <div class="card"><h2>画面サイズ</h2><ul><li>基準: 360 × 800 dp(縦向き)</li><li>左右の余白: 16 dp</li><li>タップできる部品: 高さ48 dp以上</li></ul></div>
+    <div class="card"><h2>共通ルール</h2><ul><li>問題と答えの画面は、上部ヘッダーに「タイトルへ」を置く</li><li>主なボタンは画面の下側に置いて親指で押しやすくする</li></ul></div>
+    <div class="card"><h2>追加した機能</h2><ul><li>連続正解ボーナス(問題の上部と答え画面)</li><li>結果画面にボーナスと最大連続を表示</li></ul></div>
+  </div>
+
+  <div class="card">
+    <h2>画面遷移</h2>
+    <div class="flow">
+      <div class="fn">ホーム<small>タイトル</small></div><div class="fa"><b>→</b>スタート</div>
+      <div class="fn">カテゴリ選択</div><div class="fa"><b>→</b>カテゴリを押す</div>
+      <div class="fn">問題</div><div class="fa"><b>→</b>選択肢を押す</div>
+      <div class="fn">答え</div><div class="fa"><b>→</b>規定問数が終わる</div>
+      <div class="fn">結果</div>
+    </div>
+    <p class="back-note">戻る動き: カテゴリ選択の「戻る」でホームへ。問題と答えの「タイトルへ」でホームへ。答えの「次の問題へ」で問題へ(最後の問題だけ結果へ)。結果の「タイトルへ」でホーム、「もう一度」で同じカテゴリの最初の問題へ。</p>
+  </div>
+
+  <div class="row">
+    <!-- 1 HOME -->
+    <div class="col">
+      <h3>1 ホーム <span>タイトル</span></h3>
+      <div class="scr">
+        <div class="sb"><span>9:41</span><span>100%</span></div>
+        <div class="gap"></div>
+        <div class="bx pill" style="align-self:center">キャッチコピー</div>
+        <div class="bx f" style="padding:22px 8px;font-size:30px;font-weight:700;line-height:1.2;position:relative">クイズ帳<span class="pin" style="left:-6px;top:-6px">1</span></div>
+        <div class="bx ph" style="height:120px;position:relative"><span>イラスト枠</span><span class="pin" style="left:-6px;top:-6px">2</span></div>
+        <div class="gap"></div>
+        <div class="bx btn" style="position:relative">スタート<span class="pin" style="left:-6px;top:-6px">3</span></div>
+        <div class="c mute" style="font-size:11px;position:relative">カテゴリを作って、問題を書こう<span class="pin" style="left:14px;top:-4px">4</span></div>
+      </div>
+      <ul class="notes">
+        <li><span class="n">1</span><span>アプリ名。ノートの表紙のように大きく見せる</span></li>
+        <li><span class="n">2</span><span>ロゴのイラストを置く場所</span></li>
+        <li><span class="n">3</span><span>スタートボタン <em>→ カテゴリ選択</em></span></li>
+        <li><span class="n">4</span><span>使い方の一言案内</span></li>
+      </ul>
+    </div>
+
+    <!-- 2 CATEGORY -->
+    <div class="col">
+      <h3>2 カテゴリ選択</h3>
+      <div class="scr">
+        <div class="sb"><span>9:41</span><span>100%</span></div>
+        <div class="hd">
+          <div class="bx pill" style="position:relative">‹ 戻る<span class="pin" style="left:-8px;top:-8px">1</span></div>
+          <div class="t" style="position:relative">カテゴリ選択<span class="pin" style="right:-8px;top:-8px">2</span></div>
+        </div>
+        <div class="bx ph" style="flex:1;border-style:dashed;flex-direction:column;gap:8px;position:relative;margin-bottom:6px">
+          <div class="big" style="width:60px;height:60px;font-size:34px;display:grid;place-items:center"><b style="font-size:34px">?</b></div>
+          <b style="font-size:15px;background:var(--fill);padding:0 6px">カテゴリがまだありません</b>
+          <span style="font-size:12px;background:var(--fill);padding:0 6px">カテゴリを作って、問題を書いていきましょう</span>
+          <span class="pin" style="left:-8px;top:-8px">3</span>
+        </div>
+        <div class="bx btn" style="position:relative">＋ カテゴリを追加<span class="pin" style="left:-8px;top:-8px">4</span></div>
+      </div>
+      <ul class="notes">
+        <li><span class="n">1</span><span>戻るボタン <em>→ ホーム</em></span></li>
+        <li><span class="n">2</span><span>画面の見出し</span></li>
+        <li><span class="n">3</span><span>カテゴリが0件のときの案内</span></li>
+        <li><span class="n">4</span><span>カテゴリを追加するボタン <em>→ カテゴリ作成(別途)</em></span></li>
+        <li><span class="n">·</span><span>カテゴリがあるとき、3〜4の代わりにカードを縦に並べる。アイコン、名前、問題数。押すとすぐ開始 <em>→ 問題</em></span></li>
+      </ul>
+    </div>
+
+    <!-- 3 QUESTION -->
+    <div class="col">
+      <h3>3 問題</h3>
+      <div class="scr">
+        <div class="sb"><span>9:41</span><span>100%</span></div>
+        <div class="hd">
+          <div class="bx pill" style="position:relative">‹ タイトルへ<span class="pin" style="left:-8px;top:-8px">1</span></div>
+          <div class="t" style="font-size:15px;position:relative">Q2 / 5<span class="pin" style="left:-4px;top:-12px">2</span></div>
+          <div class="bx pill" style="position:relative">120pt<span class="pin" style="right:-8px;top:-8px">3</span></div>
+        </div>
+        <div class="prog" style="position:relative"><i></i><span class="pin" style="right:-8px;top:-8px">4</span></div>
+        <div class="row2" style="align-items:center;position:relative"><div class="bx pill">カテゴリ名</div><div class="txt mute" style="text-align:right">3連続正解中</div><span class="pin" style="left:46%;top:-10px">5</span></div>
+        <div class="bx f" style="flex-direction:column;align-items:stretch;gap:8px;text-align:left;position:relative">
+          <div class="bx ph" style="height:84px"><span>画像</span></div>
+          <div class="txt">問題文が入ります。2行から3行くらいまで。</div>
+          <span class="pin" style="left:-8px;top:-8px">6</span>
+        </div>
+        <div class="bx ch" style="position:relative"><i>A</i>選択肢 1<span class="pin" style="left:-8px;top:-8px">7</span></div>
+        <div class="bx ch"><i>B</i>選択肢 2</div>
+        <div class="bx ch"><i>C</i>選択肢 3</div>
+        <div class="bx ch"><i>D</i>選択肢 4</div>
+      </div>
+      <ul class="notes">
+        <li><span class="n">1</span><span>ヘッダーのタイトルへボタン <em>→ ホーム</em></span></li>
+        <li><span class="n">2</span><span>今の問題番号 / 全問題数</span></li>
+        <li><span class="n">3</span><span>現在のスコア</span></li>
+        <li><span class="n">4</span><span>進み具合のバー</span></li>
+        <li><span class="n">5</span><span>カテゴリ名と、連続正解の回数</span></li>
+        <li><span class="n">6</span><span>問題カード。画像は任意で、ない問題は枠ごと詰める</span></li>
+        <li><span class="n">7</span><span>選択肢A〜D。押すと判定 <em>→ 答え</em></span></li>
+      </ul>
+    </div>
+
+    <!-- 4 ANSWER -->
+    <div class="col">
+      <h3>4 答え</h3>
+      <div class="scr">
+        <div class="sb"><span>9:41</span><span>100%</span></div>
+        <div class="hd">
+          <div class="bx pill" style="position:relative">‹ タイトルへ<span class="pin" style="left:-8px;top:-8px">1</span></div>
+          <div class="t" style="font-size:15px">Q2 / 5</div>
+          <div class="bx pill">150pt</div>
+        </div>
+        <div style="position:relative"><div class="mark">○</div><div class="c" style="font-size:24px;font-weight:700;margin-top:4px">せいかい!</div><span class="pin" style="left:78px;top:0">2</span></div>
+        <div class="bx f" style="flex-direction:column;gap:2px;position:relative"><small class="mute" style="font-size:11px">答え</small><b style="font-size:19px">正解の選択肢</b><span class="pin" style="left:-8px;top:-8px">3</span></div>
+        <div style="position:relative;display:grid;gap:6px"><div class="ln"></div><div class="ln"></div><div class="ln s"></div><span class="pin" style="left:-8px;top:-6px">4</span></div>
+        <div class="bx f" style="justify-content:space-between;position:relative"><span>連続正解ボーナス</span><b>+30 pt</b><span class="pin" style="left:-8px;top:-8px">5</span></div>
+        <div class="gap"></div>
+        <div class="bx btn" style="position:relative">次の問題へ<span class="pin" style="left:-8px;top:-8px">6</span></div>
+      </div>
+      <ul class="notes">
+        <li><span class="n">1</span><span>問題画面と同じヘッダー <em>→ ホーム</em></span></li>
+        <li><span class="n">2</span><span>正解は○、不正解は×で大きく表示</span></li>
+        <li><span class="n">3</span><span>正解の選択肢。不正解のときはあなたの答えも並べる</span></li>
+        <li><span class="n">4</span><span>解説文(2〜3行)</span></li>
+        <li><span class="n">5</span><span>連続正解ボーナス。不正解なら非表示</span></li>
+        <li><span class="n">6</span><span>次へ <em>→ 問題</em> 最後の問題では <em>→ 結果</em></span></li>
+      </ul>
+    </div>
+
+    <!-- 5 RESULT -->
+    <div class="col">
+      <h3>5 結果</h3>
+      <div class="scr">
+        <div class="sb"><span>9:41</span><span>100%</span></div>
+        <div class="hd">
+          <div class="t" style="position:relative">結果発表<span class="pin" style="right:-24px;top:-8px">1</span></div>
+          <div class="bx pill">カテゴリ名</div>
+        </div>
+        <div style="position:relative"><div class="big"><small>ランク</small><b>A</b><small>4 / 5 問せいかい</small></div><span class="pin" style="left:60px;top:-4px">2</span></div>
+        <div class="c" style="font-size:16px;font-weight:700;position:relative">あと1問で S ランク!<span class="pin" style="left:20px;top:-6px">3</span></div>
+        <div class="grid3" style="position:relative">
+          <div class="bx f" style="flex-direction:column"><small class="mute" style="font-size:10px">最大連続</small><b>3回</b></div>
+          <div class="bx f" style="flex-direction:column"><small class="mute" style="font-size:10px">ボーナス</small><b>+30</b></div>
+          <div class="bx f" style="flex-direction:column"><small class="mute" style="font-size:10px">タイム</small><b>0:48</b></div>
+          <span class="pin" style="left:-8px;top:-8px">4</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:baseline;position:relative"><span>合計スコア</span><b style="font-size:26px">430pt</b><span class="pin" style="left:-8px;top:-4px">5</span></div>
+        <div class="gap"></div>
+        <div class="row2" style="position:relative"><div class="bx btn sec" style="font-size:14px">タイトルへ</div><div class="bx btn" style="font-size:14px">もう一度</div><span class="pin" style="left:-8px;top:-8px">6</span></div>
+      </div>
+      <ul class="notes">
+        <li><span class="n">1</span><span>見出しと、遊んだカテゴリ</span></li>
+        <li><span class="n">2</span><span>ランク(S・A・B・C・D)を大きく。下に正解数 / 問題数</span></li>
+        <li><span class="n">3</span><span>次のランクまでの案内(例: あと1問で S ランク)</span></li>
+        <li><span class="n">4</span><span>最大連続、ボーナス、タイム</span></li>
+        <li><span class="n">5</span><span>合計スコア(ボーナス込み)</span></li>
+        <li><span class="n">6</span><span>タイトルへ <em>→ ホーム</em> もう一度 <em>→ 同じカテゴリの問題1</em></span></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card tw">
+    <h2>ランク表記の考え方</h2>
+    <table class="spec">
+      <tr><th>ランク</th><th>正解率</th><th>5問のとき</th></tr>
+      <tr><td>S</td><td>100%</td><td>5問せいかい</td></tr>
+      <tr><td>A</td><td>80%以上</td><td>4問</td></tr>
+      <tr><td>B</td><td>60%以上</td><td>3問</td></tr>
+      <tr><td>C</td><td>40%以上</td><td>2問</td></tr>
+      <tr><td>D</td><td>40%未満</td><td>0〜1問</td></tr>
+    </table>
+    <ul style="margin:12px 0 0;padding-left:20px;display:grid;gap:4px">
+      <li><b>正解数ではなく正解率で決める。</b>カテゴリを自分で作るので問題数がバラバラです。5問でも20問でも同じ基準で比べられます。</li>
+      <li><b>ボーナス点はランクに入れない。</b>ランクは正解率だけで決めると、カテゴリ同士を公平に比べられます。</li>
+      <li><b>問題数が少ないときは注意。</b>1問だとSかDしかなくなります。5問以上でランクを出し、それ未満は「○問せいかい」の表示だけにするのがおすすめです。</li>
+      <li><b>低いランクは励ます言葉を添える。</b>次のランクまでの距離を見せ、「もう一度」を押したくなるようにします。</li>
+      <li><b>色だけに頼らない。</b>ランクは文字で読めるので、色の区別がつきにくくても伝わります。</li>
+      <li><b>基準の数字は1か所にまとめる。</b>アプリを作るとき、80%や60%を設定値として持っておくと、あとから簡単に調整できます。</li>
+    </ul>
+  </div>
+
+  <div class="card tw">
+    <h2>部品の一覧</h2>
+    <table class="spec">
+      <tr><th>部品</th><th>使う画面</th><th>メモ</th></tr>
+      <tr><td>ヘッダー(戻る / タイトルへ)</td><td>カテゴリ、問題、答え</td><td>カテゴリは「戻る」、問題と答えは「タイトルへ」</td></tr>
+      <tr><td>主ボタン</td><td>ホーム、答え、結果</td><td>画面の下側。1画面に主ボタンは1つ</td></tr>
+      <tr><td>カテゴリカード</td><td>カテゴリ選択</td><td>アイコン、名前、問題数。0件のときは空の案内と追加ボタン</td></tr>
+      <tr><td>問題カード</td><td>問題</td><td>画像は任意</td></tr>
+      <tr><td>選択肢ボタン</td><td>問題</td><td>A〜Dの4つ。高さ48 dp以上</td></tr>
+      <tr><td>連続正解チップ</td><td>問題、答え、結果</td><td>ボーナス点の加算を見せる</td></tr>
+    </table>
+  </div>
+</div>
+
+</body></html>
