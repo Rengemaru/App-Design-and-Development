@@ -1,0 +1,196 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>クイズ帳 全画面</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Yusei+Magic&family=Zen+Maru+Gothic:wght@500;700;900&display=swap">
+<style>
+/* Layout: style guide strip on top, then every notebook screen (main flow + variants) in a wrapping grid of phones */
+:root{--bg:#EEF1F8;--fg:#1E2A5A;--mute:#5b6488;--card:#fff;--line:#d3d9ec;--accent:#FF5A5F}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--bg:#141829;--fg:#e9ecf8;--mute:#a3abc9;--card:#1f2540;--line:#38405f;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#141829;--fg:#e9ecf8;--mute:#a3abc9;--card:#1f2540;--line:#38405f;color-scheme:dark}
+body{background:var(--bg);color:var(--fg);font-family:'Zen Maru Gothic',system-ui,sans-serif;font-size:14px;line-height:1.6;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:28px 56px}
+.wrap{max-width:1480px;margin:0 auto;display:grid;gap:28px}
+h1{margin:0;font-size:clamp(24px,4.5vw,34px);font-weight:900;line-height:1.25}
+h2{margin:0 0 10px;font-size:16px;font-weight:900}
+.mute{color:var(--mute);margin:0}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px;min-width:0}
+.guide{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px}
+.sw{display:flex;flex-wrap:wrap;gap:10px}
+.sw div{display:grid;gap:4px;justify-items:center;font-size:11px;color:var(--mute)}
+.sw b{width:44px;height:44px;border-radius:10px;border:1px solid rgba(120,120,120,.35)}
+.fontdemo{font-family:'Yusei Magic';font-size:22px;line-height:1.4}
+.parts{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.sec-title{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+.sec-title h2{margin:0}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(296px,1fr));gap:30px 20px;justify-items:center}
+.cell{display:grid;gap:8px;justify-items:center}
+.cell figcaption{font-weight:700;font-size:13px;text-align:center}
+.cell figcaption small{display:block;color:var(--mute);font-weight:500;font-size:11.5px}
+figure{margin:0}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:30;background:var(--bg)}
+
+/* ---------- notebook theme ---------- */
+.phone{--bg:#EAF6FF;--ink:#1E2A5A;--card:#fff;--p:#FF5A5F;--pf:#fff;--s:#FFE066;--sf:#1E2A5A;--a:#FFE066;--line:#1E2A5A;--bd:2px;--r:6px;
+  --sh:3px 3px 0 rgba(30,42,90,.55);--shs:2px 2px 0 rgba(30,42,90,.4);--ng:#3C8DFF;--c1:#FF5A5F;--c2:#3C8DFF;--c3:#2FBF71;--c4:#FFB020;
+  width:280px;height:580px;background:#15141c;border-radius:36px;padding:8px;box-shadow:0 14px 30px rgba(20,30,80,.25)}
+.scr{position:relative;height:100%;border-radius:28px;overflow:hidden;background:repeating-linear-gradient(#EAF6FF 0 23px,#9CCBEA 23px 24px);color:var(--ink);font-family:'Yusei Magic','Zen Maru Gothic',sans-serif;font-weight:400;font-size:13px;line-height:1.4;padding:10px 16px 18px;display:flex;flex-direction:column;gap:10px}
+.scr>*{position:relative;z-index:1}
+.sb{display:flex;justify-content:space-between;font:700 10px system-ui,sans-serif;opacity:.7;padding:0 4px}
+.hd{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.ttl{font-size:19px;line-height:1.2}
+.back{background:#fff;border:var(--bd) solid var(--line);border-radius:99px;padding:3px 11px;font-size:11px;box-shadow:var(--shs);white-space:nowrap}
+.pt{font-size:11px;background:var(--a);border:var(--bd) solid var(--line);border-radius:99px;padding:3px 10px}
+.btn{position:relative;font-size:17px;text-align:center;background:var(--p);color:var(--pf);border:var(--bd) solid var(--line);border-radius:var(--r);box-shadow:var(--sh);padding:11px 8px;transform:rotate(-.8deg)}
+.btn::before{content:"";position:absolute;left:50%;top:-9px;width:46px;height:14px;background:rgba(255,224,102,.88);transform:translateX(-50%) rotate(-3deg)}
+.btn.alt{background:var(--s);color:var(--sf)}.btn.alt::before,.btn.sm::before{display:none}
+.btn.sm{font-size:13px;padding:9px 6px}
+.card2{background:#fff;border:var(--bd) solid var(--line);border-radius:var(--r);box-shadow:var(--sh);padding:10px 12px;transform:rotate(-.6deg)}
+.sub{font-size:12px;opacity:.85;text-align:center}
+/* title */
+.s-title{justify-content:space-between}
+.mid{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;text-align:center}
+.logo small{display:inline-block;font-size:11px;background:var(--a);border:var(--bd) solid var(--line);border-radius:99px;padding:2px 12px;margin-bottom:8px;transform:rotate(-3deg)}
+.empty{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;text-align:center;border:3px dashed var(--line);border-radius:10px;padding:18px 14px;margin-bottom:8px;background:rgba(255,255,255,.55)}
+.empty .q{width:64px;height:64px;font-size:40px;border-width:3px}
+.empty b{font-weight:400;font-size:17px}.empty span{font-size:12px;opacity:.8;line-height:1.5}
+.logo h1{margin:0;font-weight:400;font-size:50px;line-height:1.05;text-decoration:underline wavy #FF5A5F 3px;text-underline-offset:8px}
+.q{width:92px;height:92px;display:grid;place-items:center;border-radius:50%;border:4px dashed #FF5A5F;color:#FF5A5F;font-size:62px;line-height:1}
+.foot{text-align:center;font-size:11px;opacity:.8;margin-top:8px}
+/* category */
+.cats{display:grid;gap:10px;flex:1;align-content:start}
+.cat{display:flex;align-items:center;gap:11px;padding:9px 11px}
+.cat:nth-child(even),.ch:nth-child(even){transform:rotate(.7deg)}
+.ic{flex:none;width:44px;height:44px;display:grid;place-items:center;font-size:22px;color:#fff;background:var(--c);border:var(--bd) solid var(--line);border-radius:5px}
+.cat:nth-child(1){--c:var(--c1)}.cat:nth-child(2){--c:var(--c2)}.cat:nth-child(3){--c:var(--c3)}.cat:nth-child(4){--c:var(--c4)}
+.nm{flex:1;min-width:0}.nm b{display:block;font-weight:400;font-size:16px;line-height:1.2}.nm span{font-size:10.5px;opacity:.7}
+.go{font-size:17px}
+/* question */
+.prog{height:10px;background:#fff;border:var(--bd) solid var(--line);border-radius:99px;overflow:hidden}.prog i{display:block;height:100%;width:40%;background:var(--p)}
+.qmeta{display:flex;justify-content:space-between;align-items:center;font-size:11px}
+.tag{background:var(--s);border:var(--bd) solid var(--line);border-radius:99px;padding:1px 10px}
+.qcard{display:grid;gap:8px}
+.img{height:88px;border-radius:4px;background:#FFF4C2;border:var(--bd) solid var(--line);display:grid;place-items:center;overflow:hidden}
+.img svg{width:92px;height:56px}
+.qtext{font-size:14.5px;line-height:1.5}
+.chs{display:grid;gap:8px}
+.ch{display:flex;align-items:center;gap:10px;padding:7px 10px;background:#fff;border:var(--bd) solid var(--line);border-radius:var(--r);box-shadow:var(--sh);font-size:13.5px;transform:rotate(-.6deg)}
+.ch .l{flex:none;width:24px;height:24px;border-radius:50%;display:grid;place-items:center;font-size:12px;color:#fff;background:var(--c);border:1.5px solid var(--line)}
+.ch:nth-child(1){--c:var(--c1)}.ch:nth-child(2){--c:var(--c2)}.ch:nth-child(3){--c:var(--c3)}.ch:nth-child(4){--c:var(--c4)}
+.ch.sel{background:#FFF0A8;box-shadow:inset 0 0 0 2px #FF5A5F,var(--sh)}
+.ch.ok{background:#DDF6E6;box-shadow:inset 0 0 0 2px #2FBF71,var(--sh)}
+.ch.ng{background:#DCEBFF;box-shadow:inset 0 0 0 2px #3C8DFF,var(--sh)}
+.ch .r{margin-left:auto;font-size:18px;line-height:1}
+/* answer */
+.s-ans{gap:9px}
+.verdict{display:flex;flex-direction:column;align-items:center;gap:4px;text-align:center}
+.mark{width:84px;height:84px;border-radius:50%;display:grid;place-items:center;font-size:58px;line-height:1;background:transparent;color:#FF5A5F;border:6px solid #FF5A5F;transform:rotate(-6deg)}
+.mark.x{color:var(--ng);border-color:var(--ng);border-radius:12px;transform:rotate(5deg)}
+.verdict h3{margin:0;font-weight:400;font-size:28px;line-height:1.1;color:#FF5A5F}
+.verdict h3.x{color:var(--ng)}
+.ans b{display:block;font-weight:400;font-size:19px;line-height:1.3}.ans small{font-size:10.5px;opacity:.7}
+.ans .you{font-size:12px;margin-top:4px;color:var(--ng)}
+.exp{font-size:12px;line-height:1.6}
+.combo{display:flex;align-items:center;justify-content:space-between;background:var(--a);border:var(--bd) solid var(--line);border-radius:var(--r);box-shadow:var(--sh);padding:7px 12px;font-size:13px;transform:rotate(.6deg)}
+.combo em{font-style:normal;font-size:16px}
+.combo.off{background:#fff;opacity:.85}
+.s-ans .btn{margin-top:auto}
+/* result */
+.s-res{gap:9px}
+.score{display:grid;justify-items:center;gap:6px;text-align:center}
+.big{width:128px;height:128px;display:grid;place-items:center;align-content:center;background:#FFE066;color:#FF5A5F;border:var(--bd) solid var(--line);box-shadow:var(--sh);border-radius:50% 46% 54% 48%;transform:rotate(-4deg)}
+.big b{font-weight:400;font-size:58px;line-height:1}.big span{font-size:12px;margin-top:-2px;color:var(--ink)}
+.big.lo{background:#E3E7F3;color:#5b6488}
+.rank{font-size:18px;color:#FF5A5F}.rank.lo{color:#5b6488}
+.ranks{display:flex;flex-wrap:wrap;gap:12px;margin-bottom:12px}
+.rk{display:flex;align-items:center;gap:10px;background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:8px 12px}
+.rk b{width:44px;height:44px;border-radius:50%;display:grid;place-items:center;background:var(--c);color:#fff;font:400 26px 'Yusei Magic'}
+.rk span{font-size:12px;line-height:1.4}
+.tips{margin:0;padding-left:20px;display:grid;gap:4px;font-size:13px}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.stats .card2{padding:7px 4px;text-align:center}.stats span{display:block;font-size:10px;opacity:.75}.stats b{font-weight:400;font-size:17px}
+.total{display:flex;justify-content:space-between;align-items:baseline}.total b{font-weight:400;font-size:26px}
+.acts{display:grid;grid-template-columns:1fr 1.2fr;gap:8px;margin-top:auto}
+@media (prefers-reduced-motion:no-preference){.phone{transition:transform .2s}.phone:hover{transform:translateY(-4px)}}
+@media (max-width:600px){.phone{width:260px;height:540px}.scr{font-size:12.5px}}
+</style>
+
+<div class="wrap">
+  <header style="display:grid;gap:8px">
+    <h1>クイズ帳 全画面</h1>
+    <p class="mute">ノートブック案の見た目を、基本の5画面と、正解や不正解で変わる画面、結果の違いまで並べました。カテゴリは自分で作る仕組みなので、最初は空の状態です。罫線は水色、赤い余白線は無しです。</p>
+  </header>
+
+  <div class="guide">
+    <div class="card"><h2>色</h2>
+      <div class="sw">
+        <div><b style="background:#EAF6FF"></b>紙</div><div><b style="background:#9CCBEA"></b>罫線</div><div><b style="background:#1E2A5A"></b>インク</div>
+        <div><b style="background:#FF5A5F"></b>赤ペン</div><div><b style="background:#FFE066"></b>蛍光ペン</div><div><b style="background:#3C8DFF"></b>青ペン</div><div><b style="background:#2FBF71"></b>緑</div>
+      </div>
+    </div>
+    <div class="card"><h2>書体</h2>
+      <div class="fontdemo">クイズ帳 1234</div>
+      <p class="mute" style="font-size:12px">すべて手書き風の「Yusei Magic」。見出しも本文も同じ書体です。</p>
+    </div>
+    <div class="card"><h2>ルール</h2>
+      <p class="mute" style="font-size:13px">正解は赤ペンの○、不正解は青ペンの×。ボタンは付箋のように少し傾け、上にテープを貼ります。カードは影を付けて紙から浮かせます。</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>ランク表記</h2>
+    <p class="mute" style="font-size:12.5px;margin-bottom:10px">結果発表は、正解数の代わりに「ランク」を大きく見せます。基準は <b>獲得スコア ÷ 理論最大スコア</b>（全問正解・時間満タン・連続継続で得られる最大点）です。</p>
+    <div class="ranks">
+      <div class="rk" style="--c:#FFB020"><b>S</b><span>スコア比<br>92%以上</span></div>
+      <div class="rk" style="--c:#FF5A5F"><b>A</b><span>80%以上</span></div>
+      <div class="rk" style="--c:#3C8DFF"><b>B</b><span>60%以上</span></div>
+      <div class="rk" style="--c:#2FBF71"><b>C</b><span>40%以上</span></div>
+      <div class="rk" style="--c:#7a84a8"><b>D</b><span>40%未満</span></div>
+    </div>
+    <h2 style="font-size:14px">ランクについての考え方</h2>
+    <ul class="tips">
+      <li><b>正解数ではなくスコア比で決める。</b>理論最大との割合で見るので、問題数がバラバラでも同じ基準で比べられます。</li>
+      <li><b>ボーナスもランクに反映される。</b>スコアには連続正解・時間ボーナスが含まれるため、速く正確に解くほどランクが上がります。時間ボーナスは1問最大+10に抑え、正解の価値を主役にしています。</li>
+      <li><b>問題数が少ないときは注意。</b>5問以上でランクを出し、それ未満は「○問せいかい」の表示だけにするのがおすすめです。</li>
+      <li><b>低いランクは励ます言葉を添える。</b>「あと40ptでAランク!」のように次のランクまでの不足ポイントを見せ、「もう一度」を押したくなるようにします。</li>
+      <li><b>色だけに頼らない。</b>ランクは文字(S・A・B・C・D)で読めるので、色の区別がつきにくくても伝わります。</li>
+      <li><b>基準の数字は1か所にまとめる。</b>各ボーナスの係数や80%・60%の閾値を設定値として持っておくと、あとから調整できます。</li>
+    </ul>
+  </div>
+
+  <div class="sec-title"><h2>基本の流れ</h2><p class="mute">ホームから結果まで</p></div>
+  <div class="grid" id="main"></div>
+
+  <div class="sec-title"><h2>バリエーション</h2><p class="mute">状態によって変わる画面</p></div>
+  <div class="grid" id="vari"></div>
+</div>
+
+<script>
+var POT='<span style="opacity:.55">画像</span>';
+var CATS=[['A','カテゴリ名','5問'],['B','カテゴリ名','5問'],['C','カテゴリ名','5問']];
+var CH=['選択肢 1','選択肢 2','選択肢 3','選択肢 4'];
+function sb(){return '<div class="sb"><span>9:41</span><span>100%</span></div>'}
+function hdr(qn,pt){return '<div class="hd"><span class="back">‹ タイトルへ</span><span class="ttl" style="font-size:15px">Q'+qn+' / 5</span><span class="pt">'+pt+'pt</span></div>'}
+function chs(state){return '<div class="chs">'+CH.map(function(c,i){
+  var cls='ch',r='';
+  if(state==='sel'&&i===0)cls+=' sel';
+  if(state==='ok'&&i===0){cls+=' ok';r='<span class="r" style="color:#FF5A5F">○</span>'}
+  if(state==='ng'&&i===1){cls+=' ng';r='<span class="r" style="color:#3C8DFF">×</span>'}
+  if(state==='ng'&&i===0){cls+=' ok';r='<span class="r" style="color:#FF5A5F">○</span>'}
+  return '<div class="'+cls+'"><span class="l">'+'ABCD'[i]+'</span>'+c+r+'</div>'}).join('')+'</div>'}
+function qscr(state){return '<div class="scr">'+sb()+hdr(2,120)+'<div class="prog"><i></i></div><div class="qmeta"><span class="tag">カテゴリ名</span><span>3連続正解中</span></div><div class="qmeta"><span>⏱ のこり <b style="font-weight:400;font-size:17px">14</b> 秒</span><span style="opacity:.75">いま答えると +7pt</span></div><div class="card2 qcard"><div class="img">'+POT+'</div><div class="qtext">問題文が入ります。2行から3行くらいまで。</div></div>'+chs(state)+'</div>'}
+function ans(ok,last){
+  var head=ok?'<div class="mark">○</div><h3>せいかい!</h3>':'<div class="mark x">×</div><h3 class="x">ざんねん…</h3>';
+  var you=ok?'':'<div class="you">あなたの答え: 選択肢 2</div>';
+  var combo=ok?'<div class="combo"><span>連続正解ボーナス</span><span><em>+30</em> pt</span></div>':'<div class="combo off"><span>連続正解がリセットされました</span></div>';
+  var timeb=ok?'<div class="combo off" style="opacity:1"><span>時間ボーナス（のこり14秒）</span><span><em>+7</em> pt</span></div>':'';
+  return '<div class="scr s-ans">'+sb()+hdr(last?5:2,ok?150:120)+'<div class="verdict">'+head+'</div><div class="card2 ans"><small>答え</small><b>選択肢 1</b>'+you+'</div><div class="exp">ここに自分で書いた解説が入ります。</div>'+combo+timeb+'<div class="btn">'+(last?'結果を見る':'次の問題へ')+'</div></div>'}
+function res(hi){
+  return '<div class="scr s-res">'+sb()+'<div class="hd"><span class="ttl">結果発表</span><span class="tag back">カテゴリ名</span></div><div class="score"><div class="big'+(hi?'':' lo')+'"><i style="font-style:normal;font-size:12px">ランク</i><b>'+(hi?'A':'D')+'</b><span>'+(hi?4:1)+' / 5 問せいかい</span></div><div class="rank'+(hi?'':' lo')+'">'+(hi?'あと1問で S ランク!':'あと1問で C ランク!')+'</div></div><div class="stats"><div class="card2"><span>最大連続</span><b>'+(hi?'3回':'1回')+'</b></div><div class="card2"><span>ボーナス</span><b>'+(hi?'+37':'+0')+'</b></div><div class="card2"><span>タイム</span><b>'+(hi?'0:48':'1:12')+'</b></div></div><div class="total"><span>合計スコア</span><b>'+(hi?'430pt':'100pt')+'</b></div><div class="acts"><div class="btn alt sm">タイトルへ</div><div class="btn sm">もう一度</div></div></div>'}
+var title='<div class="scr s-title">'+sb()+'<div class="mid"><div class="logo"><small>自分で作るクイズ</small><h1>クイズ帳</h1></div><div class="q">?</div></div><div><div class="btn">スタート</div><div class="foot">カテゴリを作って、問題を書こう</div></div></div>';
+var catEmpty='<div class="scr">'+sb()+'<div class="hd"><span class="back">‹ 戻る</span><span class="ttl">カテゴリ選択</span></div><div class="empty"><div class="q">?</div><b>カテゴリがまだありません</b><span>カテゴリを作って、<br>問題を書いていきましょう</span></div><div class="btn">＋ カテゴリを追加</div></div>';
+var cat='<div class="scr">'+sb()+'<div class="hd"><span class="back">‹ 戻る</span><span class="ttl">カテゴリ選択</span></div><div class="sub">挑戦するカテゴリをえらぼう</div><div class="cats">'+CATS.map(function(c){return '<div class="card2 cat"><div class="ic">'+c[0]+'</div><div class="nm"><b>'+c[1]+'</b><span>'+c[2]+'</span></div><div class="go">›</div></div>'}).join('')+'</div></div>';
+function put(id,list){document.getElementById(id).innerHTML=list.map(function(s){return '<figure class="cell"><div class="phone">'+s[2]+'</div><figcaption>'+s[0]+'<small>'+s[1]+'</small></figcaption></figure>'}).join('')}
+put('main',[['ホーム','タイトル',title],['カテゴリ選択','カテゴリがまだないとき',catEmpty],['問題','画像つきの問題(画像は任意)',qscr('')],['答え','正解のとき',ans(true,false)],['結果','ランクAのとき',res(true)]]);
+put('vari',[['カテゴリ選択','カテゴリを作ったあと',cat],['問題','選択肢を押した直後',qscr('sel')],['問題','判定後(正解を表示)',qscr('ok')],['答え','不正解のとき',ans(false,false)],['答え','最後の問題のとき',ans(true,true)],['結果','ランクDのとき',res(false)]]);
+</script>
+
+</body></html>
