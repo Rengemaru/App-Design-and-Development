@@ -4,14 +4,18 @@
     android:layout_height="wrap_content"
     android:layout_marginBottom="10dp"
     android:background="@drawable/bg_card"
+    android:foreground="?android:attr/selectableItemBackground"
+    android:clickable="true"
+    android:focusable="true"
+    android:minHeight="76dp"
     android:gravity="center_vertical"
     android:orientation="horizontal"
     android:padding="11dp">
 
     <TextView
         android:id="@+id/category_icon"
-        android:layout_width="44dp"
-        android:layout_height="44dp"
+        android:layout_width="52dp"
+        android:layout_height="52dp"
         android:background="@drawable/bg_icon_box"
         android:gravity="center"
         android:textColor="@color/white"
@@ -29,14 +33,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@color/ink"
-            android:textSize="16sp" />
+            android:textSize="19sp" />
 
         <TextView
             android:id="@+id/category_count"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@color/mute"
-            android:textSize="11sp" />
+            android:textSize="14sp" />
     </LinearLayout>
 
     <TextView
@@ -44,6 +48,6 @@
         android:layout_height="wrap_content"
         android:text="@string/category_arrow"
         android:textColor="@color/ink"
-        android:textSize="18sp" />
+        android:textSize="22sp" />
 
 </LinearLayout>
