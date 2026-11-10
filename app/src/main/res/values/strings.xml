@@ -1,3 +1,62 @@
 <resources>
-    <string name="app_name">App-Design-and-Development</string>
+    <string name="app_name">クイズ帳</string>
+
+    <!-- タイトル画面 -->
+    <string name="title_badge">自分で作るクイズ</string>
+    <string name="title_logo">クイズ帳</string>
+    <string name="title_start">スタート</string>
+    <string name="title_note">カテゴリをえらんで、クイズに挑戦しよう</string>
+
+    <!-- カテゴリ画面 -->
+    <string name="back">‹ 戻る</string>
+    <string name="back_to_title">‹ タイトルへ</string>
+    <string name="category_title">カテゴリ選択</string>
+    <string name="category_sub">挑戦するカテゴリをえらぼう</string>
+    <string name="category_count">%d問</string>
+    <string name="category_arrow">›</string>
+    <string name="load_error">quiz.json を読み込めませんでした</string>
+
+    <!-- 問題・こたえ画面 -->
+    <string name="q_progress">Q%1$d / %2$d</string>
+    <string name="score_pt">%dpt</string>
+    <string name="streak_ongoing">%d連続正解中</string>
+    <string name="time_remaining_label">⏱ のこり</string>
+    <string name="time_seconds">%d秒</string>
+
+    <!-- こたえ画面 -->
+    <string name="verdict_correct">せいかい!</string>
+    <string name="verdict_wrong">ざんねん…</string>
+    <string name="mark_correct">○</string>
+    <string name="mark_wrong">×</string>
+    <string name="answer_label">答え</string>
+    <string name="your_answer">あなたの答え: %s</string>
+    <string name="combo_bonus">%d連続正解ボーナス</string>
+    <string name="combo_reset">連続正解がリセットされました</string>
+    <string name="time_bonus">時間ボーナス（のこり%d秒）</string>
+    <string name="time_bonus_none">時間切れ：時間ボーナスなし</string>
+    <string name="bonus_pt">+%d pt</string>
+    <string name="bonus_zero">+0 pt</string>
+    <string name="next_question">次の問題へ</string>
+    <string name="see_result">結果を見る</string>
+
+    <!-- 結果画面 -->
+    <string name="result_title">結果発表</string>
+    <string name="rank_label">ランク</string>
+    <string name="result_correct">%1$d / %2$d 問せいかい</string>
+    <string name="next_rank">あと%1$dptで %2$s ランク!</string>
+    <string name="top_rank">最高ランク達成！すばらしい!</string>
+    <string name="rank_min_note">5問以上でランクがつきます</string>
+    <string name="stat_max_streak">最大連続</string>
+    <string name="stat_bonus">ボーナス</string>
+    <string name="stat_time">タイム</string>
+    <string name="streak_count">%d回</string>
+    <string name="bonus_total">+%d</string>
+    <string name="total_score_label">合計スコア</string>
+    <string name="to_title">タイトルへ</string>
+    <string name="retry">もう一度</string>
+
+    <!-- 確認ダイアログ -->
+    <string name="quit_message">タイトルへ戻りますか？（進行中のクイズは終了します）</string>
+    <string name="quit_ok">戻る</string>
+    <string name="quit_cancel">続ける</string>
 </resources>
