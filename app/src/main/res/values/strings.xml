@@ -30,12 +30,10 @@
     <string name="mark_wrong">×</string>
     <string name="answer_label">答え</string>
     <string name="your_answer">あなたの答え: %s</string>
-    <string name="combo_bonus">%d連続正解ボーナス</string>
+    <string name="combo_bonus">%1$d連続正解ボーナス  +%2$d pt</string>
     <string name="combo_reset">連続正解がリセットされました</string>
-    <string name="time_bonus">時間ボーナス（のこり%d秒）</string>
-    <string name="time_bonus_none">時間切れ：時間ボーナスなし</string>
-    <string name="bonus_pt">+%d pt</string>
-    <string name="bonus_zero">+0 pt</string>
+    <string name="time_bonus">時間ボーナス（のこり%1$d秒）  +%2$d pt</string>
+    <string name="time_bonus_none">時間切れ：時間ボーナスなし  +0 pt</string>
     <string name="next_question">次の問題へ</string>
     <string name="see_result">結果を見る</string>
 
