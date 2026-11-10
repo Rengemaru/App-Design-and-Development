@@ -1,19 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/bg"
     tools:context=".MainActivity">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Hello World!"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+    <include
+        android:id="@+id/screen_title"
+        layout="@layout/screen_title" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <include
+        android:id="@+id/screen_category"
+        layout="@layout/screen_category"
+        android:visibility="gone" />
+
+    <include
+        android:id="@+id/screen_question"
+        layout="@layout/screen_question"
+        android:visibility="gone" />
+
+    <include
+        android:id="@+id/screen_answer"
+        layout="@layout/screen_answer"
+        android:visibility="gone" />
+
+    <include
+        android:id="@+id/screen_result"
+        layout="@layout/screen_result"
+        android:visibility="gone" />
+
+</FrameLayout>

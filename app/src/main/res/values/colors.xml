@@ -2,4 +2,29 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+
+    <!-- クイズ帳のパレット（モック prototype.html の値を正とする） -->
+    <color name="bg">#EEF1F8</color>
+    <color name="ink">#1E2A5A</color>
+    <color name="mute">#5B6488</color>
+    <color name="line">#1E2A5A</color>
+    <color name="primary">#FF5A5F</color>
+    <color name="secondary">#FFE066</color>
+
+    <!-- 選択肢ラベルの色 A/B/C/D -->
+    <color name="choice1">#FF5A5F</color>
+    <color name="choice2">#3C8DFF</color>
+    <color name="choice3">#2FBF71</color>
+    <color name="choice4">#FFB020</color>
+
+    <!-- 正誤ハイライト -->
+    <color name="correct_bg">#DDF6E6</color>
+    <color name="correct_line">#2FBF71</color>
+    <color name="wrong_bg">#DCEBFF</color>
+    <color name="wrong_line">#3C8DFF</color>
+
+    <!-- タイマーバー -->
+    <color name="timer_ok">#2FBF71</color>
+    <color name="timer_warn">#FFB020</color>
+    <color name="timer_danger">#FF5A5F</color>
 </resources>
