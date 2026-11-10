@@ -61,8 +61,8 @@ flowchart LR
 | こたえ   | 答えの文言 / *次へ*ボタン           |
 | 結果     | 結果(正解数, 経過時間, 指標) / *タイトルへ*ボタン / *もう一度*ボタン                                |
 
-画面設計と動作モックは[PR #1](https://github.com/Rengemaru/App-Design-and-Development/pull/1)で整備中。
-詳細は末尾の「参照」を確認する。
+画面設計は [docs/wireframe/](docs/wireframe/)、動作モックは [docs/mock/prototype.html](docs/mock/prototype.html) を参照する。
+資料の一覧は末尾の「参照」を確認する。
 
 ## クイズ内容
 
@@ -86,24 +86,19 @@ flowchart LR
 コーディング主担当が処理方針の決定と主開発を担い、コーディング副担当はレビューとテストを担当する。
 副担当とその支援エージェントは、主担当の方針と既存のGit運用に合わせて作業する。
 変更は作業ブランチで行い、プルリクエストで共有する。
-ブランチ名やPRの書き方は、既存のPR #1（`docs/setup`）を参考にする。
+ブランチ名やPRの書き方は、[PR #1](https://github.com/Rengemaru/App-Design-and-Development/pull/1)（`docs/setup`）を参考にする。
 
-要件と設計の詳細は `docs/` 配下の資料を正とし、AI支援の進め方は `AGENTS.md` に従う（いずれもPR #1で追加予定）。
+要件と設計の詳細は [docs/](docs/) 配下の資料を正とし、AI支援の進め方は [AGENTS.md](AGENTS.md) に従う。
 本READMEの処理フローは起案時の概要であり、採点や制限時間などの詳細は設計資料を参照する。
 
 ## 参照
 
-[PR #1：ドキュメント整備：AGENTS.md・設計資料・動作モック](https://github.com/Rengemaru/App-Design-and-Development/pull/1)に以下の資料が含まれる。
+以下の資料を参照する。
 
-| 資料 | PR #1での配置 |
+| 資料 | 配置 |
 | --- | --- |
-| AI支援の運用方針 | `AGENTS.md` |
-| 画面構成と遷移 | `docs/wireframe/wireframe.html` |
-| デザイン適用後の画面 | `docs/wireframe/screen.html` |
-| 動作モック | `docs/mock/prototype.html` |
-| モック用のクイズデータ | `docs/mock/quiz-data.js` |
-
-> [!WARNING]
-> README作成時点ではPR #1は未マージのため、上記の資料はPR #1で確認する。
-> 元の演習ノートで第7回授業に配置予定としていた `docs/screen-design/` は、現時点で存在しない。
-> 画面設計の参照先は、PR #1の `docs/wireframe/` に合わせている。
+| AI支援の運用方針 | [AGENTS.md](AGENTS.md) |
+| 画面構成と遷移 | [docs/wireframe/wireframe.html](docs/wireframe/wireframe.html) |
+| デザイン適用後の画面 | [docs/wireframe/screen.html](docs/wireframe/screen.html) |
+| 動作モック | [docs/mock/prototype.html](docs/mock/prototype.html) |
+| モック用のクイズデータ | [docs/mock/quiz-data.js](docs/mock/quiz-data.js) |
