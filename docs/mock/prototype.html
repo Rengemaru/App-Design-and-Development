@@ -26,6 +26,17 @@ body{margin:0;min-height:100vh;background:var(--bg);color:var(--fg);font-family:
   background:repeating-linear-gradient(#EAF6FF 0 23px,#9CCBEA 23px 24px);
   font-family:'Yusei Magic','Zen Maru Gothic',sans-serif;font-weight:400;font-size:13px;line-height:1.4;
   padding:12px 16px 18px;display:flex;flex-direction:column;gap:10px}
+/* バッテリー0%の消灯演出（CRT風に一瞬で消える） */
+#poweroff{position:absolute;inset:0;z-index:50;background:#000;opacity:0;pointer-events:none}
+#poweroff.on{opacity:1;pointer-events:auto}
+#poweroff.on::after{content:"";position:absolute;left:12%;right:12%;top:50%;height:4px;border-radius:4px;
+  background:#fff;box-shadow:0 0 12px 3px #fff;animation:scrOff .38s ease-out forwards}
+@keyframes scrOff{
+  0%{opacity:0;transform:translateY(-2px) scaleY(90)}
+  12%{opacity:1;transform:scaleY(90)}
+  55%{opacity:1;transform:scaleY(1) scaleX(1)}
+  100%{opacity:0;transform:scaleY(1) scaleX(0)}
+}
 .sb{display:flex;justify-content:space-between;font:700 10px system-ui,sans-serif;opacity:.7;padding:0 4px}
 .bat-wrap{display:inline-flex;align-items:center;gap:4px}
 .bat{display:inline-flex;align-items:center}
@@ -80,6 +91,11 @@ body{margin:0;min-height:100vh;background:var(--bg);color:var(--fg);font-family:
 .img{height:84px;border-radius:4px;background:#FFF4C2;border:var(--bd) solid var(--line2);display:grid;place-items:center;overflow:hidden}
 .img svg{width:92px;height:52px}
 .qtext{font-size:14.5px;line-height:1.5}
+.hint{display:grid;gap:3px;background:#FFF4C2;border:var(--bd) dashed var(--line2);border-radius:var(--r);
+  padding:8px 11px;font-size:12.5px;line-height:1.5;color:var(--ink);animation:hintIn .25s ease-out}
+.hint[hidden]{display:none}
+.hint b{font-weight:400;font-size:12.5px}
+@keyframes hintIn{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
 .chs{display:grid;gap:8px}
 .ch{display:flex;align-items:center;gap:10px;padding:8px 10px;background:#fff;border:var(--bd) solid var(--line2);border-radius:var(--r);box-shadow:var(--sh);font-size:13.5px;transform:rotate(-.6deg);cursor:pointer}
 .ch .l{flex:none;width:24px;height:24px;border-radius:50%;display:grid;place-items:center;font-size:12px;color:#fff;background:var(--c);border:1.5px solid var(--line2)}
@@ -162,6 +178,7 @@ body{margin:0;min-height:100vh;background:var(--bg);color:var(--fg);font-family:
         <div class="img" id="qimg"></div>
         <div class="qtext" id="qtext">問題文</div>
       </div>
+      <div class="hint" id="qhint" hidden><b>💡 ヒント</b><span id="qhinttext"></span></div>
       <div class="chs" id="qchs"></div>
     </div>
 
@@ -200,6 +217,9 @@ body{margin:0;min-height:100vh;background:var(--bg);color:var(--fg);font-family:
         <div class="btn sm" onclick="startQuiz(state.catIndex)">もう一度</div>
       </div>
     </div>
+
+    <!-- バッテリー0%で画面が消灯する演出 -->
+    <div id="poweroff"></div>
   </div>
 </div>
 
@@ -217,6 +237,7 @@ var CONFIG={
   BASE_POINT:100,       // 正解の基礎点
   COMBO_STEP:15,        // 連続正解ボーナス = (連続数-1) × この値
   MIN_Q_FOR_RANK:5,     // これ未満の問題数ではランクを出さない
+  AUTO_ADVANCE_SEC:3,   // 答え画面から次へ自動で進むまでの秒数
   RANKS:[               // 獲得スコア ÷ 理論最大スコア で判定（上から順に判定）
     {g:'S',min:0.92,c:'#FFB020'},
     {g:'A',min:0.8,c:'#FF5A5F'},
@@ -241,9 +262,11 @@ var CATEGORIES=DATA.categories||[];
    ============================================================ */
 var state={};
 var timer=null;
+var ansTimer=null;
 
 function $(id){return document.getElementById(id)}
 function go(v){['home','cat','quiz','ans','result'].forEach(function(n){$('v-'+n).classList.toggle('on',n===v)});
+  if(v!=='ans')clearAutoAdvance(); // 答え画面を離れたら自動送りを止める
   if(v==='home'||v==='cat')stopTimer();
   if(v==='cat')renderCats();}
 
@@ -282,6 +305,9 @@ function loadQuestion(){
   $('qchs').innerHTML=q.choices.map(function(c,i){
     return '<div class="ch" onclick="answer('+i+')"><span class="l">'+'ABCD'[i]+'</span>'+c+'<span class="r"></span></div>';
   }).join('');
+  // ヒントは時間切れ(0秒)で表示。最初は隠す
+  $('qhinttext').textContent=q.hint||'ヒントはありません';
+  $('qhint').hidden=true;
   startTimer();
 }
 
@@ -292,7 +318,9 @@ function startTimer(){
   timer=setInterval(function(){
     state.remaining=Math.max(0,(end-Date.now())/1000);
     updateTimer();
-    if(state.remaining<=0){state.timedOut=true;stopTimer();}
+    if(state.remaining<=0){state.timedOut=true;stopTimer();
+      if(!state.answered)$('qhint').hidden=false; // 時間切れでヒント表示
+    }
   },50);
 }
 function stopTimer(){if(timer){clearInterval(timer);timer=null;}}
@@ -355,9 +383,27 @@ function renderAnswer(q,choice,ok,combo,timeb){
   }else{at.style.display='none';}
 
   var last=state.qi>=state.total-1;
-  $('anext').textContent=last?'結果を見る':'次の問題へ';
-  $('anext').onclick=last?showResult:nextQuestion;
+  var label=last?'結果を見る':'次の問題へ';
+  var advance=last?showResult:nextQuestion;
+  startAutoAdvance(label,advance);
 }
+
+/* 答え画面：3秒カウントダウンで自動送り。手動タップでも即進める */
+function startAutoAdvance(label,advance){
+  clearAutoAdvance();
+  var n=CONFIG.AUTO_ADVANCE_SEC;
+  var btn=$('anext');
+  var go=function(){clearAutoAdvance();advance();};
+  btn.onclick=go;
+  var render=function(){btn.textContent=label+'（'+n+'）';};
+  render();
+  ansTimer=setInterval(function(){
+    n--;
+    if(n<=0){go();return;}
+    render();
+  },1000);
+}
+function clearAutoAdvance(){if(ansTimer){clearInterval(ansTimer);ansTimer=null;}}
 
 function nextQuestion(){state.qi++;loadQuestion();go('quiz');}
 
@@ -421,6 +467,15 @@ function renderBatteries(){
   });
 }
 renderBatteries();
+
+/* バッテリーが0%なら電源が切れたように画面を消す */
+function checkBatteryShutoff(){
+  if(Math.max(0,Math.min(100,BATTERY_LEVEL))<=0){
+    stopTimer();
+    $('poweroff').classList.add('on');
+  }
+}
+checkBatteryShutoff();
 
 renderCats();
 </script>
