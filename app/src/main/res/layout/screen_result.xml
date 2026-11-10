@@ -196,6 +196,10 @@
 
         <TextView
             android:id="@+id/btn_to_title"
+            android:minHeight="48dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:foreground="?android:attr/selectableItemBackground"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginEnd="4dp"
@@ -209,6 +213,10 @@
 
         <TextView
             android:id="@+id/btn_retry"
+            android:minHeight="48dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:foreground="?android:attr/selectableItemBackground"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="4dp"
@@ -217,7 +225,7 @@
             android:gravity="center"
             android:padding="11dp"
             android:text="@string/retry"
-            android:textColor="@color/white"
+            android:textColor="@color/ink"
             android:textSize="14sp" />
     </LinearLayout>
 

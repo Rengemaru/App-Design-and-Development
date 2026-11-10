@@ -194,11 +194,13 @@ class MainActivity : AppCompatActivity() {
         val mark = findViewById<TextView>(R.id.verdict_mark)
         val verdict = findViewById<TextView>(R.id.verdict_text)
         if (result.correct) {
+            mark.setBackgroundResource(R.drawable.bg_verdict_correct)
             mark.text = getString(R.string.mark_correct)
             mark.setTextColor(getColor(R.color.primary))
             verdict.text = getString(R.string.verdict_correct)
             verdict.setTextColor(getColor(R.color.primary))
         } else {
+            mark.setBackgroundResource(R.drawable.bg_verdict_wrong)
             mark.text = getString(R.string.mark_wrong)
             mark.setTextColor(getColor(R.color.wrong_line))
             verdict.text = getString(R.string.verdict_wrong)

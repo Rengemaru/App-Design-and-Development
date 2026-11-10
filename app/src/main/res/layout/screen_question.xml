@@ -13,9 +13,14 @@
 
         <TextView
             android:id="@+id/btn_quit_question"
+            android:minHeight="48dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:foreground="?android:attr/selectableItemBackground"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@drawable/bg_pill"
+            android:gravity="center"
             android:paddingHorizontal="11dp"
             android:paddingVertical="3dp"
             android:text="@string/back_to_title"
