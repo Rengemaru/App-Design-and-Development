@@ -78,7 +78,7 @@ p{margin:0}.mute{color:var(--mute)}
   <div class="meta">
     <div class="card"><h2>画面サイズ</h2><ul><li>基準: 360 × 800 dp(縦向き)</li><li>左右の余白: 16 dp</li><li>タップできる部品: 高さ48 dp以上</li></ul></div>
     <div class="card"><h2>共通ルール</h2><ul><li>問題と答えの画面は、上部ヘッダーに「タイトルへ」を置く</li><li>主なボタンは画面の下側に置いて親指で押しやすくする</li></ul></div>
-    <div class="card"><h2>追加した機能</h2><ul><li>連続正解ボーナス(問題の上部と答え画面)</li><li>制限時間(1問20秒・設定値)と時間ボーナス(残り秒数×係数)</li><li>結果画面にボーナス(連続+時間)と最大連続を表示</li></ul></div>
+    <div class="card"><h2>追加した機能</h2><ul><li>連続正解ボーナス(問題の上部と答え画面)</li><li>制限時間(1問20秒・設定値)と時間ボーナス(残り秒数×係数)</li><li>制限時間が0秒になると問題ごとのヒントを表示</li><li>答え画面は数秒(既定3秒)のカウントダウンで自動的に次へ進む(手動タップも可)</li><li>結果画面にボーナス(連続+時間)と最大連続を表示</li><li>(演出)バッテリー0%で画面が消灯する</li></ul></div>
   </div>
 
   <div class="card">
@@ -159,6 +159,7 @@ p{margin:0}.mute{color:var(--mute)}
           <div class="txt">問題文が入ります。2行から3行くらいまで。</div>
           <span class="pin" style="left:-8px;top:-8px">6</span>
         </div>
+        <div class="bx f" style="flex-direction:column;align-items:flex-start;gap:2px;text-align:left;position:relative;background:#FFF4C2;border-style:dashed"><b style="font-size:12px">💡 ヒント</b><span class="txt">時間切れのときだけ表示</span><span class="pin" style="left:-8px;top:-8px">9</span></div>
         <div class="bx ch" style="position:relative"><i>A</i>選択肢 1<span class="pin" style="left:-8px;top:-8px">7</span></div>
         <div class="bx ch"><i>B</i>選択肢 2</div>
         <div class="bx ch"><i>C</i>選択肢 3</div>
@@ -173,6 +174,7 @@ p{margin:0}.mute{color:var(--mute)}
         <li><span class="n">6</span><span>問題カード。画像は任意で、ない問題は枠ごと詰める</span></li>
         <li><span class="n">7</span><span>選択肢A〜D。押すと判定 <em>→ 答え</em></span></li>
         <li><span class="n">8</span><span>制限時間のカウントダウン(1問20秒・設定値)。残り秒数×係数が時間ボーナスになる。0秒でも解答は続けられ、ボーナスが+0になるだけ</span></li>
+        <li><span class="n">9</span><span>ヒント。制限時間が0秒になったとき(未解答時)だけ表示する。秒数が残っているうちは出さない。文面は問題ごとに設定</span></li>
       </ul>
     </div>
 
@@ -192,7 +194,7 @@ p{margin:0}.mute{color:var(--mute)}
         <div class="bx f" style="justify-content:space-between;position:relative"><span>連続正解ボーナス</span><b>+30 pt</b><span class="pin" style="left:-8px;top:-8px">5</span></div>
         <div class="bx f" style="justify-content:space-between;position:relative"><span>時間ボーナス</span><b>+7 pt</b><span class="pin" style="left:-8px;top:-8px">6</span></div>
         <div class="gap"></div>
-        <div class="bx btn" style="position:relative">次の問題へ<span class="pin" style="left:-8px;top:-8px">7</span></div>
+        <div class="bx btn" style="position:relative">次の問題へ（3）<span class="pin" style="left:-8px;top:-8px">7</span></div>
       </div>
       <ul class="notes">
         <li><span class="n">1</span><span>問題画面と同じヘッダー <em>→ ホーム</em></span></li>
@@ -201,7 +203,7 @@ p{margin:0}.mute{color:var(--mute)}
         <li><span class="n">4</span><span>解説文(2〜3行)</span></li>
         <li><span class="n">5</span><span>連続正解ボーナス。不正解なら非表示</span></li>
         <li><span class="n">6</span><span>時間ボーナス = 残り秒数 × 係数。時間切れ(0秒)や不正解なら +0 で非表示</span></li>
-        <li><span class="n">7</span><span>次へ <em>→ 問題</em> 最後の問題では <em>→ 結果</em></span></li>
+        <li><span class="n">7</span><span>次へ <em>→ 問題</em> 最後の問題では <em>→ 結果</em>。既定3秒(設定値)のカウントダウンで自動的に進み、ボタン内に残り秒数を表示。手動タップで即座に進むこともできる</span></li>
       </ul>
     </div>
 
@@ -270,6 +272,8 @@ p{margin:0}.mute{color:var(--mute)}
       <tr><td>選択肢ボタン</td><td>問題</td><td>A〜Dの4つ。高さ48 dp以上</td></tr>
       <tr><td>連続正解チップ</td><td>問題、答え、結果</td><td>ボーナス点の加算を見せる</td></tr>
       <tr><td>カウントダウンタイマー</td><td>問題</td><td>1問20秒(設定値)。残り秒数×係数(0.5)が時間ボーナス(最大+10)。0でボーナスのみ無効、解答は継続可</td></tr>
+      <tr><td>ヒント(付箋)</td><td>問題</td><td>時間切れ(0秒)のときだけ表示。文面は問題ごとに設定(未設定の問題は非表示でもよい)</td></tr>
+      <tr><td>自動送りボタン</td><td>答え</td><td>既定3秒(設定値)のカウントダウンで自動遷移。残り秒数を表示し、手動タップでも進める</td></tr>
     </table>
   </div>
 

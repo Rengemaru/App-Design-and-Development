@@ -176,13 +176,18 @@ function chs(state){return '<div class="chs">'+CH.map(function(c,i){
   if(state==='ng'&&i===1){cls+=' ng';r='<span class="r" style="color:#3C8DFF">×</span>'}
   if(state==='ng'&&i===0){cls+=' ok';r='<span class="r" style="color:#FF5A5F">○</span>'}
   return '<div class="'+cls+'"><span class="l">'+'ABCD'[i]+'</span>'+c+r+'</div>'}).join('')+'</div>'}
-function qscr(state){return '<div class="scr">'+sb()+hdr(2,120)+'<div class="prog"><i></i></div><div class="qmeta"><span class="tag">カテゴリ名</span><span>3連続正解中</span></div><div class="qmeta"><span>⏱ のこり <b style="font-weight:400;font-size:17px">14</b> 秒</span><span style="opacity:.75">いま答えると +7pt</span></div><div class="card2 qcard"><div class="img">'+POT+'</div><div class="qtext">問題文が入ります。2行から3行くらいまで。</div></div>'+chs(state)+'</div>'}
+function qscr(state,timeout){
+  var sec=timeout?0:14;
+  var right=timeout?'<span style="opacity:.75">時間切れ：ボーナスなし</span>':'<span style="opacity:.75">いま答えると +7pt</span>';
+  var hint=timeout?'<div class="card2 qcard" style="background:#FFF4C2;border-style:dashed"><b style="font-weight:400;font-size:13px">💡 ヒント</b><div style="font-size:12.5px;line-height:1.5">時間切れのときだけ表示されるヒント文</div></div>':'';
+  return '<div class="scr">'+sb()+hdr(2,120)+'<div class="prog"><i></i></div><div class="qmeta"><span class="tag">カテゴリ名</span><span>3連続正解中</span></div><div class="qmeta"><span>⏱ のこり <b style="font-weight:400;font-size:17px">'+sec+'</b> 秒</span>'+right+'</div><div class="card2 qcard"><div class="img">'+POT+'</div><div class="qtext">問題文が入ります。2行から3行くらいまで。</div></div>'+hint+chs(state)+'</div>';
+}
 function ans(ok,last){
   var head=ok?'<div class="mark">○</div><h3>せいかい!</h3>':'<div class="mark x">×</div><h3 class="x">ざんねん…</h3>';
   var you=ok?'':'<div class="you">あなたの答え: 選択肢 2</div>';
   var combo=ok?'<div class="combo"><span>連続正解ボーナス</span><span><em>+30</em> pt</span></div>':'<div class="combo off"><span>連続正解がリセットされました</span></div>';
   var timeb=ok?'<div class="combo off" style="opacity:1"><span>時間ボーナス（のこり14秒）</span><span><em>+7</em> pt</span></div>':'';
-  return '<div class="scr s-ans">'+sb()+hdr(last?5:2,ok?150:120)+'<div class="verdict">'+head+'</div><div class="card2 ans"><small>答え</small><b>選択肢 1</b>'+you+'</div><div class="exp">ここに自分で書いた解説が入ります。</div>'+combo+timeb+'<div class="btn">'+(last?'結果を見る':'次の問題へ')+'</div></div>'}
+  return '<div class="scr s-ans">'+sb()+hdr(last?5:2,ok?150:120)+'<div class="verdict">'+head+'</div><div class="card2 ans"><small>答え</small><b>選択肢 1</b>'+you+'</div><div class="exp">ここに自分で書いた解説が入ります。</div>'+combo+timeb+'<div class="btn">'+(last?'結果を見る':'次の問題へ')+'（3）</div></div>'}
 function res(hi){
   return '<div class="scr s-res">'+sb()+'<div class="hd"><span class="ttl">結果発表</span><span class="tag back">カテゴリ名</span></div><div class="score"><div class="big'+(hi?'':' lo')+'"><i style="font-style:normal;font-size:12px">ランク</i><b>'+(hi?'A':'D')+'</b><span>'+(hi?4:1)+' / 5 問せいかい</span></div><div class="rank'+(hi?'':' lo')+'">'+(hi?'あと1問で S ランク!':'あと1問で C ランク!')+'</div></div><div class="stats"><div class="card2"><span>最大連続</span><b>'+(hi?'3回':'1回')+'</b></div><div class="card2"><span>ボーナス</span><b>'+(hi?'+37':'+0')+'</b></div><div class="card2"><span>タイム</span><b>'+(hi?'0:48':'1:12')+'</b></div></div><div class="total"><span>合計スコア</span><b>'+(hi?'430pt':'100pt')+'</b></div><div class="acts"><div class="btn alt sm">タイトルへ</div><div class="btn sm">もう一度</div></div></div>'}
 var title='<div class="scr s-title">'+sb()+'<div class="mid"><div class="logo"><small>自分で作るクイズ</small><h1>クイズ帳</h1></div><div class="q">?</div></div><div><div class="btn">スタート</div><div class="foot">カテゴリを作って、問題を書こう</div></div></div>';
@@ -190,7 +195,7 @@ var catEmpty='<div class="scr">'+sb()+'<div class="hd"><span class="back">‹ �
 var cat='<div class="scr">'+sb()+'<div class="hd"><span class="back">‹ 戻る</span><span class="ttl">カテゴリ選択</span></div><div class="sub">挑戦するカテゴリをえらぼう</div><div class="cats">'+CATS.map(function(c){return '<div class="card2 cat"><div class="ic">'+c[0]+'</div><div class="nm"><b>'+c[1]+'</b><span>'+c[2]+'</span></div><div class="go">›</div></div>'}).join('')+'</div></div>';
 function put(id,list){document.getElementById(id).innerHTML=list.map(function(s){return '<figure class="cell"><div class="phone">'+s[2]+'</div><figcaption>'+s[0]+'<small>'+s[1]+'</small></figcaption></figure>'}).join('')}
 put('main',[['ホーム','タイトル',title],['カテゴリ選択','カテゴリがまだないとき',catEmpty],['問題','画像つきの問題(画像は任意)',qscr('')],['答え','正解のとき',ans(true,false)],['結果','ランクAのとき',res(true)]]);
-put('vari',[['カテゴリ選択','カテゴリを作ったあと',cat],['問題','選択肢を押した直後',qscr('sel')],['問題','判定後(正解を表示)',qscr('ok')],['答え','不正解のとき',ans(false,false)],['答え','最後の問題のとき',ans(true,true)],['結果','ランクDのとき',res(false)]]);
+put('vari',[['カテゴリ選択','カテゴリを作ったあと',cat],['問題','選択肢を押した直後',qscr('sel')],['問題','判定後(正解を表示)',qscr('ok')],['問題','時間切れ(ヒント表示)',qscr('',true)],['答え','不正解のとき',ans(false,false)],['答え','最後の問題のとき',ans(true,true)],['結果','ランクDのとき',res(false)]]);
 </script>
 
 </body></html>
