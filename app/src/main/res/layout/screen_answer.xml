@@ -23,6 +23,7 @@
             android:gravity="center"
             android:paddingHorizontal="11dp"
             android:paddingVertical="3dp"
+            android:fontFamily="@font/yusei_magic"
             android:text="@string/back_to_title"
             android:textColor="@color/ink"
             android:textSize="14sp" />
@@ -32,10 +33,10 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:fontFamily="@font/yusei_magic"
             android:gravity="center"
             android:textColor="@color/ink"
-            android:textSize="18sp"
-            android:textStyle="bold" />
+            android:textSize="18sp" />
 
         <TextView
             android:id="@+id/answer_score"
@@ -78,6 +79,7 @@
                     android:id="@+id/verdict_text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:fontFamily="@font/yusei_magic"
                     android:textSize="30sp" />
             </LinearLayout>
 
@@ -158,6 +160,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/bg_button_primary"
+        android:fontFamily="@font/yusei_magic"
         android:gravity="center"
         android:padding="12dp"
         android:textColor="@color/ink"
