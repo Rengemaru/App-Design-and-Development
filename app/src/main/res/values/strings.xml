@@ -2,7 +2,8 @@
     <string name="app_name">クイズ帳</string>
 
     <!-- タイトル画面 -->
-    <string name="title_badge">自分で作るクイズ</string>
+    <string name="title_badge">全%1$d問のクイズを収録！</string>
+    <string name="title_badge_unavailable">カテゴリ別のクイズに挑戦！</string>
     <string name="title_logo">クイズ帳</string>
     <string name="title_start">スタート</string>
     <string name="title_note">カテゴリをえらんで、クイズに挑戦しよう</string>
