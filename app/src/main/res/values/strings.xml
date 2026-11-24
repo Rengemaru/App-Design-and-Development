@@ -27,16 +27,19 @@
     <!-- こたえ画面 -->
     <string name="verdict_correct">せいかい!</string>
     <string name="verdict_wrong">ざんねん…</string>
+    <string name="verdict_timeout">時間切れ…</string>
     <string name="mark_correct">○</string>
     <string name="mark_wrong">×</string>
     <string name="answer_label">答え</string>
     <string name="your_answer">あなたの答え: %s</string>
+    <string name="your_answer_timeout">あなたの答え: 時間切れ（未回答）</string>
     <string name="combo_bonus">%1$d連続正解ボーナス  +%2$d pt</string>
     <string name="combo_reset">連続正解がリセットされました</string>
     <string name="time_bonus">時間ボーナス（のこり%1$d秒）  +%2$d pt</string>
     <string name="time_bonus_none">時間切れ：時間ボーナスなし  +0 pt</string>
     <string name="next_question">次の問題へ</string>
     <string name="see_result">結果を見る</string>
+    <string name="next_with_count">%1$s（あと%2$d秒）</string>
 
     <!-- 結果画面 -->
     <string name="result_title">結果発表</string>

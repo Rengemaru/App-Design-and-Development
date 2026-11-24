@@ -1,9 +1,13 @@
 package com.example.app_design_and_development
 
+import android.graphics.BitmapFactory
+import android.graphics.drawable.BitmapDrawable
+import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.view.View
+import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.ProgressBar
 import android.widget.TextView
@@ -46,7 +50,25 @@ class MainActivity : AppCompatActivity() {
             renderTimer()
             if (remainingSeconds > 0.0) {
                 handler.postDelayed(this, TIMER_INTERVAL_MS)
+            } else {
+                // 時間切れ：強制的に未回答（不正解）として打ち切り、こたえ画面へ。
+                answer(TIMEOUT_CHOICE)
             }
+        }
+    }
+
+    // こたえ画面の自動送り関連
+    private var lastAnswer: AnswerResult? = null
+    private var autoAdvanceSecondsLeft = 0
+    private val autoAdvanceTick = object : Runnable {
+        override fun run() {
+            if (autoAdvanceSecondsLeft <= 0) {
+                advanceFromAnswer()
+                return
+            }
+            updateNextButtonLabel(autoAdvanceSecondsLeft)
+            autoAdvanceSecondsLeft--
+            handler.postDelayed(this, 1000L)
         }
     }
 
@@ -96,6 +118,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         stopTimer()
+        stopAutoAdvance()
         super.onDestroy()
     }
 
@@ -103,6 +126,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun show(screen: Screen) {
         if (screen == Screen.TITLE || screen == Screen.CATEGORY) stopTimer()
+        stopAutoAdvance()
         screens.forEach { (key, view) ->
             view.visibility = if (key == screen) View.VISIBLE else View.GONE
         }
@@ -188,8 +212,10 @@ class MainActivity : AppCompatActivity() {
         val engine = engine ?: return
         stopTimer()
         val result = engine.answer(choiceIndex, remainingSeconds)
+        lastAnswer = result
         renderAnswer(result)
         show(Screen.ANSWER)
+        startAutoAdvance()
     }
 
     private fun renderAnswer(result: AnswerResult) {
@@ -198,19 +224,21 @@ class MainActivity : AppCompatActivity() {
 
         findViewById<TextView>(R.id.answer_score).text = getString(R.string.score_pt, engine.score)
 
-        val mark = findViewById<TextView>(R.id.verdict_mark)
+        // 選択肢の範囲外（TIMEOUT_CHOICE）なら時間切れによる未回答。
+        val timedOut = result.selectedIndex !in question.choices.indices
+
+        val mark = findViewById<ImageView>(R.id.verdict_mark)
         val verdict = findViewById<TextView>(R.id.verdict_text)
         if (result.correct) {
-            mark.setBackgroundResource(R.drawable.bg_verdict_correct)
-            mark.text = getString(R.string.mark_correct)
-            mark.setTextColor(getColor(R.color.primary))
+            mark.setImageDrawable(assetDrawable("maru.png"))
+            mark.contentDescription = getString(R.string.verdict_correct)
             verdict.text = getString(R.string.verdict_correct)
             verdict.setTextColor(getColor(R.color.primary))
         } else {
-            mark.setBackgroundResource(R.drawable.bg_verdict_wrong)
-            mark.text = getString(R.string.mark_wrong)
-            mark.setTextColor(getColor(R.color.wrong_line))
-            verdict.text = getString(R.string.verdict_wrong)
+            mark.setImageDrawable(assetDrawable("batsu.png"))
+            val label = getString(if (timedOut) R.string.verdict_timeout else R.string.verdict_wrong)
+            mark.contentDescription = label
+            verdict.text = label
             verdict.setTextColor(getColor(R.color.wrong_line))
         }
 
@@ -220,7 +248,11 @@ class MainActivity : AppCompatActivity() {
                 visibility = View.GONE
             } else {
                 visibility = View.VISIBLE
-                text = getString(R.string.your_answer, question.choices[result.selectedIndex])
+                text = if (timedOut) {
+                    getString(R.string.your_answer_timeout)
+                } else {
+                    getString(R.string.your_answer, question.choices[result.selectedIndex])
+                }
             }
         }
         findViewById<TextView>(R.id.answer_explanation).text = question.explanation
@@ -251,11 +283,37 @@ class MainActivity : AppCompatActivity() {
         }
 
         findViewById<TextView>(R.id.btn_next).apply {
-            text = getString(if (result.isLastQuestion) R.string.see_result else R.string.next_question)
-            setOnClickListener {
-                if (result.isLastQuestion) showResult() else nextQuestion()
-            }
+            text = nextButtonBaseText()
+            setOnClickListener { advanceFromAnswer() }
         }
+    }
+
+    // ---- こたえ画面の自動送り ------------------------------------------
+
+    /** こたえ画面を一定秒後に自動で次へ進める。手動タップでも進める。 */
+    private fun startAutoAdvance() {
+        stopAutoAdvance()
+        autoAdvanceSecondsLeft = AUTO_ADVANCE_SECONDS
+        handler.post(autoAdvanceTick)
+    }
+
+    private fun stopAutoAdvance() {
+        handler.removeCallbacks(autoAdvanceTick)
+    }
+
+    /** 自動送り・手動タップ共通の遷移。最後の問題なら結果へ、そうでなければ次の問題へ。 */
+    private fun advanceFromAnswer() {
+        stopAutoAdvance()
+        val result = lastAnswer ?: return
+        if (result.isLastQuestion) showResult() else nextQuestion()
+    }
+
+    private fun nextButtonBaseText(): String =
+        getString(if (lastAnswer?.isLastQuestion == true) R.string.see_result else R.string.next_question)
+
+    private fun updateNextButtonLabel(secondsLeft: Int) {
+        findViewById<TextView>(R.id.btn_next).text =
+            getString(R.string.next_with_count, nextButtonBaseText(), secondsLeft)
     }
 
     private fun nextQuestion() {
@@ -281,7 +339,9 @@ class MainActivity : AppCompatActivity() {
             val highlight = result.ratio >= 0.6
             big.backgroundTintList =
                 colorOf(if (highlight) "#FFE066" else "#E3E7F3")
+            // ランクは文字で表示する（「ランク」ラベル＋等級文字）。
             rankLabel.visibility = View.VISIBLE
+            rank.visibility = View.VISIBLE
             rank.text = result.rank.grade
             rank.setTextColor(result.rank.color.toColorInt())
             correct.text = getString(R.string.result_correct, result.correctCount, result.total)
@@ -295,6 +355,7 @@ class MainActivity : AppCompatActivity() {
         } else {
             big.backgroundTintList = colorOf("#FFE066")
             rankLabel.visibility = View.GONE
+            rank.visibility = View.VISIBLE
             rank.text = result.correctCount.toString()
             rank.setTextColor(getColor(R.color.primary))
             correct.text = getString(R.string.result_correct, result.correctCount, result.total)
@@ -356,6 +417,16 @@ class MainActivity : AppCompatActivity() {
     private fun colorOf(hex: String) =
         android.content.res.ColorStateList.valueOf(hex.toColorInt())
 
+    /** assets 配下の PNG を Drawable として読み込む（結果が null の場合は非表示にする想定）。 */
+    private val assetDrawableCache = mutableMapOf<String, Drawable?>()
+
+    private fun assetDrawable(fileName: String): Drawable? =
+        assetDrawableCache.getOrPut(fileName) {
+            runCatching {
+                assets.open(fileName).use { BitmapDrawable(resources, BitmapFactory.decodeStream(it)) }
+            }.getOrNull()
+        }
+
     private fun formatTime(seconds: Double): String {
         val total = seconds.roundToInt()
         return "%d:%02d".format(total / 60, total % 60)
@@ -363,6 +434,10 @@ class MainActivity : AppCompatActivity() {
 
     companion object {
         private const val TIMER_INTERVAL_MS = 50L
+        /** 時間切れ時に未回答（不正解）として渡す番兵の選択肢添字。 */
+        private const val TIMEOUT_CHOICE = -1
+        /** こたえ画面を自動で次へ進めるまでの秒数。 */
+        private const val AUTO_ADVANCE_SECONDS = 5
         private val LABELS = listOf("A", "B", "C", "D")
         private val CHOICE_COLORS = listOf("#FF5A5F", "#3C8DFF", "#2FBF71", "#FFB020")
     }

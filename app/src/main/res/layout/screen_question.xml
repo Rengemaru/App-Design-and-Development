@@ -23,6 +23,7 @@
             android:gravity="center"
             android:paddingHorizontal="11dp"
             android:paddingVertical="3dp"
+            android:fontFamily="@font/yusei_magic"
             android:text="@string/back_to_title"
             android:textColor="@color/ink"
             android:textSize="14sp" />
@@ -32,10 +33,10 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:fontFamily="@font/yusei_magic"
             android:gravity="center"
             android:textColor="@color/ink"
-            android:textSize="18sp"
-            android:textStyle="bold" />
+            android:textSize="18sp" />
 
         <TextView
             android:id="@+id/question_score"
@@ -113,9 +114,9 @@
                     android:id="@+id/timer_text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:fontFamily="@font/yusei_magic"
                     android:textColor="@color/ink"
-                    android:textSize="21sp"
-                    android:textStyle="bold" />
+                    android:textSize="21sp" />
             </LinearLayout>
 
             <ProgressBar

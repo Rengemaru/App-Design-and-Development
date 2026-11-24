@@ -3,6 +3,10 @@
     <style name="Base.Theme.AppDesignandDevelopment" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Customize your light theme here. -->
         <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+        <!-- 本文・UIの既定フォントは丸ゴシック（Figma: Zen Maru Gothic）。
+             見出し・ボタンは各レイアウトで手書き風 @font/yusei_magic を指定する。 -->
+        <item name="android:fontFamily">@font/zen_maru_gothic</item>
+        <item name="fontFamily">@font/zen_maru_gothic</item>
     </style>
 
     <style name="Theme.AppDesignandDevelopment" parent="Base.Theme.AppDesignandDevelopment" />
