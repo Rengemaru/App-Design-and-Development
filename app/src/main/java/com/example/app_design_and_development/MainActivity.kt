@@ -78,6 +78,13 @@ class MainActivity : AppCompatActivity() {
             emptyList()
         }
 
+        val totalQuestions = categories.sumOf { it.questions.size }
+        findViewById<TextView>(R.id.title_badge).text = if (totalQuestions > 0) {
+            getString(R.string.title_badge, totalQuestions)
+        } else {
+            getString(R.string.title_badge_unavailable)
+        }
+
         findViewById<View>(R.id.btn_start).setOnClickListener { showCategory() }
         findViewById<View>(R.id.btn_back_category).setOnClickListener { show(Screen.TITLE) }
         findViewById<View>(R.id.btn_quit_question).setOnClickListener { confirmQuit() }
