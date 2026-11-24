@@ -1,9 +1,13 @@
 package com.example.app_design_and_development
 
+import android.graphics.BitmapFactory
+import android.graphics.drawable.BitmapDrawable
+import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.view.View
+import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.ProgressBar
 import android.widget.TextView
@@ -191,18 +195,16 @@ class MainActivity : AppCompatActivity() {
 
         findViewById<TextView>(R.id.answer_score).text = getString(R.string.score_pt, engine.score)
 
-        val mark = findViewById<TextView>(R.id.verdict_mark)
+        val mark = findViewById<ImageView>(R.id.verdict_mark)
         val verdict = findViewById<TextView>(R.id.verdict_text)
         if (result.correct) {
-            mark.setBackgroundResource(R.drawable.bg_verdict_correct)
-            mark.text = getString(R.string.mark_correct)
-            mark.setTextColor(getColor(R.color.primary))
+            mark.setImageDrawable(assetDrawable("maru.png"))
+            mark.contentDescription = getString(R.string.verdict_correct)
             verdict.text = getString(R.string.verdict_correct)
             verdict.setTextColor(getColor(R.color.primary))
         } else {
-            mark.setBackgroundResource(R.drawable.bg_verdict_wrong)
-            mark.text = getString(R.string.mark_wrong)
-            mark.setTextColor(getColor(R.color.wrong_line))
+            mark.setImageDrawable(assetDrawable("batsu.png"))
+            mark.contentDescription = getString(R.string.verdict_wrong)
             verdict.text = getString(R.string.verdict_wrong)
             verdict.setTextColor(getColor(R.color.wrong_line))
         }
@@ -266,6 +268,7 @@ class MainActivity : AppCompatActivity() {
 
         val big = findViewById<View>(R.id.result_big)
         val rankLabel = findViewById<TextView>(R.id.result_rank_label)
+        val rankImage = findViewById<ImageView>(R.id.result_rank_image)
         val rank = findViewById<TextView>(R.id.result_rank)
         val correct = findViewById<TextView>(R.id.result_correct)
         val message = findViewById<TextView>(R.id.result_message)
@@ -275,6 +278,10 @@ class MainActivity : AppCompatActivity() {
             big.backgroundTintList =
                 colorOf(if (highlight) "#FFE066" else "#E3E7F3")
             rankLabel.visibility = View.VISIBLE
+            val rankDrawable = assetDrawable("rank-${result.rank.grade}.png")
+            rankImage.setImageDrawable(rankDrawable)
+            rankImage.contentDescription = result.rank.grade
+            rankImage.visibility = if (rankDrawable != null) View.VISIBLE else View.GONE
             rank.text = result.rank.grade
             rank.setTextColor(result.rank.color.toColorInt())
             correct.text = getString(R.string.result_correct, result.correctCount, result.total)
@@ -288,6 +295,7 @@ class MainActivity : AppCompatActivity() {
         } else {
             big.backgroundTintList = colorOf("#FFE066")
             rankLabel.visibility = View.GONE
+            rankImage.visibility = View.GONE
             rank.text = result.correctCount.toString()
             rank.setTextColor(getColor(R.color.primary))
             correct.text = getString(R.string.result_correct, result.correctCount, result.total)
@@ -348,6 +356,16 @@ class MainActivity : AppCompatActivity() {
 
     private fun colorOf(hex: String) =
         android.content.res.ColorStateList.valueOf(hex.toColorInt())
+
+    /** assets 配下の PNG を Drawable として読み込む（結果が null の場合は非表示にする想定）。 */
+    private val assetDrawableCache = mutableMapOf<String, Drawable?>()
+
+    private fun assetDrawable(fileName: String): Drawable? =
+        assetDrawableCache.getOrPut(fileName) {
+            runCatching {
+                assets.open(fileName).use { BitmapDrawable(resources, BitmapFactory.decodeStream(it)) }
+            }.getOrNull()
+        }
 
     private fun formatTime(seconds: Double): String {
         val total = seconds.roundToInt()

@@ -66,12 +66,13 @@
                 android:gravity="center"
                 android:orientation="vertical">
 
-                <TextView
+                <ImageView
                     android:id="@+id/verdict_mark"
-                    android:layout_width="100dp"
-                    android:layout_height="100dp"
-                    android:gravity="center"
-                    android:textSize="54sp" />
+                    android:layout_width="110dp"
+                    android:layout_height="110dp"
+                    android:adjustViewBounds="true"
+                    android:contentDescription="@string/verdict_correct"
+                    android:scaleType="fitCenter" />
 
                 <TextView
                     android:id="@+id/verdict_text"

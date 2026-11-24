@@ -50,11 +50,14 @@
 
                 <LinearLayout
                     android:id="@+id/result_big"
-                    android:layout_width="150dp"
-                    android:layout_height="150dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:minWidth="170dp"
+                    android:minHeight="170dp"
                     android:background="@drawable/bg_big_rank"
                     android:gravity="center"
-                    android:orientation="vertical">
+                    android:orientation="vertical"
+                    android:padding="10dp">
 
                     <TextView
                         android:id="@+id/result_rank_label"
@@ -64,12 +67,21 @@
                         android:textColor="@color/ink"
                         android:textSize="14sp" />
 
+                    <ImageView
+                        android:id="@+id/result_rank_image"
+                        android:layout_width="96dp"
+                        android:layout_height="96dp"
+                        android:adjustViewBounds="true"
+                        android:contentDescription="@string/rank_label"
+                        android:scaleType="fitCenter"
+                        android:visibility="gone" />
+
                     <TextView
                         android:id="@+id/result_rank"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textColor="@color/primary"
-                        android:textSize="54sp" />
+                        android:textSize="40sp" />
 
                     <TextView
                         android:id="@+id/result_correct"
