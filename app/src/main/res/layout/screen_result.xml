@@ -65,22 +65,13 @@
                         android:textColor="@color/ink"
                         android:textSize="14sp" />
 
-                    <ImageView
-                        android:id="@+id/result_rank_image"
-                        android:layout_width="96dp"
-                        android:layout_height="96dp"
-                        android:adjustViewBounds="true"
-                        android:contentDescription="@string/rank_label"
-                        android:scaleType="fitCenter"
-                        android:visibility="gone" />
-
                     <TextView
                         android:id="@+id/result_rank"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:fontFamily="@font/yusei_magic"
                         android:textColor="@color/primary"
-                        android:textSize="40sp" />
+                        android:textSize="56sp" />
 
                     <TextView
                         android:id="@+id/result_correct"

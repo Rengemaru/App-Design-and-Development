@@ -268,7 +268,6 @@ class MainActivity : AppCompatActivity() {
 
         val big = findViewById<View>(R.id.result_big)
         val rankLabel = findViewById<TextView>(R.id.result_rank_label)
-        val rankImage = findViewById<ImageView>(R.id.result_rank_image)
         val rank = findViewById<TextView>(R.id.result_rank)
         val correct = findViewById<TextView>(R.id.result_correct)
         val message = findViewById<TextView>(R.id.result_message)
@@ -277,15 +276,9 @@ class MainActivity : AppCompatActivity() {
             val highlight = result.ratio >= 0.6
             big.backgroundTintList =
                 colorOf(if (highlight) "#FFE066" else "#E3E7F3")
-            // ランクは画像のみで表示（画像に「ランク」ラベルと等級文字が含まれるため重複を避ける）。
-            // 画像が読めない場合のみ文字でフォールバックする。
-            val rankDrawable = assetDrawable("rank-${result.rank.grade}.png")
-            rankImage.setImageDrawable(rankDrawable)
-            rankImage.contentDescription = getString(R.string.rank_label) + " " + result.rank.grade
-            val hasImage = rankDrawable != null
-            rankImage.visibility = if (hasImage) View.VISIBLE else View.GONE
-            rankLabel.visibility = if (hasImage) View.GONE else View.VISIBLE
-            rank.visibility = if (hasImage) View.GONE else View.VISIBLE
+            // ランクは文字で表示する（「ランク」ラベル＋等級文字）。
+            rankLabel.visibility = View.VISIBLE
+            rank.visibility = View.VISIBLE
             rank.text = result.rank.grade
             rank.setTextColor(result.rank.color.toColorInt())
             correct.text = getString(R.string.result_correct, result.correctCount, result.total)
@@ -299,7 +292,6 @@ class MainActivity : AppCompatActivity() {
         } else {
             big.backgroundTintList = colorOf("#FFE066")
             rankLabel.visibility = View.GONE
-            rankImage.visibility = View.GONE
             rank.visibility = View.VISIBLE
             rank.text = result.correctCount.toString()
             rank.setTextColor(getColor(R.color.primary))
